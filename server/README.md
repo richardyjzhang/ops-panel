@@ -15,6 +15,7 @@
   "app-key": "用于数据库敏感信息加密",
   "mqtt-host": "MQTT Broker地址",
   "mqtt-username": "MQTT登录用户名",
-  "mqtt-password": "MQTT登录密码"
+  "mqtt-password": "MQTT登录密码",
+  "mqtt-topic": "MQTT主题"
 }
 ```
