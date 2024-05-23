@@ -22,4 +22,11 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
 
+    from .blueprints.auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint)
+
+    # 仅用于初始添加用户，后续应注释以下两行
+    # from .blueprints.user import user as user_blueprint
+    # app.register_blueprint(user_blueprint)
+
     return app
