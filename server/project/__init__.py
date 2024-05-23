@@ -22,11 +22,23 @@ def create_app():
     login_manager = LoginManager()
     login_manager.init_app(app)
 
+    from .models import User
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.query.get(int(user_id))
+
     from .blueprints.auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint)
+
+    from .blueprints.status import status as status_blueprint
+    app.register_blueprint(status_blueprint)
 
     # 仅用于初始添加用户，后续应注释以下两行
     # from .blueprints.user import user as user_blueprint
     # app.register_blueprint(user_blueprint)
+
+    from .subscriber import init_subscriber
+    init_subscriber(app)
 
     return app

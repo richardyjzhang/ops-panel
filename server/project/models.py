@@ -18,3 +18,23 @@ class User(UserMixin, db.Model, Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     username: Mapped[str] = mapped_column()
     password: Mapped[str] = mapped_column()
+
+
+# 机器类，表示一个服务器的环境
+class Machine(db.Model, Base):
+    name: Mapped[str] = mapped_column(primary_key=True)
+
+
+# 机器状态
+class MachineStatus(db.Model, Base):
+    name: Mapped[str] = mapped_column(primary_key=True)
+    cpu: Mapped[float] = mapped_column()
+    mem: Mapped[float] = mapped_column()
+    last: Mapped[str] = mapped_column()
+
+
+# 机器磁盘状态，和机器形成一对多关系
+class MachineDiskStatus(db.Model, Base):
+    machine_name: Mapped[str] = mapped_column(primary_key=True)
+    mount: Mapped[str] = mapped_column(primary_key=True)
+    usage: Mapped[float] = mapped_column()
