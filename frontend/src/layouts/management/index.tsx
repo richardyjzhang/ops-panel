@@ -34,7 +34,7 @@ export default function Layout() {
       <div className={styles.root}>
         <nav className={styles.nav}>
           <img className={styles.icon} src="icon.png" />
-          <div className={styles.title}>丑逼运维监控</div>
+          <div className={styles.title}>Server Monitor Panel</div>
           <div className={styles.space} />
           <div>
             <Dropdown menu={{ items: userMenuItems }}>

@@ -10,6 +10,14 @@ export default defineApp({
           token: {
             colorPrimary: "orange",
           },
+          components: {
+            Card: {
+              headerBg: "orange",
+            },
+            Progress: {
+              defaultColor: "orange",
+            },
+          },
         }}
       >
         {container}

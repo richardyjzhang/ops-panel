@@ -16,3 +16,9 @@ export async function postLogoutRequest() {
   });
   return response;
 }
+
+// 获取服务器最新状态
+export async function fetchStatusRequest() {
+  const response = await request("/api/status");
+  return response;
+}

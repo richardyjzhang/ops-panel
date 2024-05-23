@@ -8,4 +8,17 @@ declare namespace API {
     success: boolean;
     message: string;
   };
+
+  type MachineState = {
+    name: string;
+    cpu: number;
+    mem: number;
+    disk: MachineDiskState[];
+    last: string;
+  };
+
+  type MachineDiskState = {
+    mount: string;
+    usage: number;
+  };
 }
