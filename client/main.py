@@ -32,8 +32,7 @@ message = json.dumps(message, ensure_ascii=False)
 
 # 通过MQTT上报
 client = mqtt.Client(client_id=f'OPS-PANEL-{config["machine"]}',
-                     clean_session=True,
-                     callback_api_version=mqtt.CallbackAPIVersion.VERSION2)
+                     clean_session=True)
 client.username_pw_set(username=config["mqtt-username"],
                        password=config["mqtt-password"])
 client.connect(host=config["mqtt-host"])
