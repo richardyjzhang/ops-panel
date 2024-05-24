@@ -1,6 +1,8 @@
 import React, { useEffect } from "react";
 import { useRequest } from "ahooks";
-import { Card, Row, Col, Progress } from "antd";
+import dayjs from "dayjs";
+import { Card, Row, Col, Progress, ConfigProvider, theme } from "antd";
+import { WifiOutlined, DisconnectOutlined } from "@ant-design/icons";
 import { fetchStatusRequest } from "@/service";
 import styles from "./index.less";
 
@@ -41,66 +43,113 @@ const DashboardPage: React.FC = () => {
     }
   };
 
+  // 判断是否离线
+  const isOffline = (machineState: API.MachineState) => {
+    const last = dayjs(machineState.last, "YYYY-MM-DD HH:mm:ss");
+    const now = dayjs();
+    const delta = now.diff(last);
+    return delta > 1000 * 60 * 5;
+  };
+
+  // 判断是否值得注意
+  const isAlarming = (machineState: API.MachineState) => {
+    if (isOffline(machineState)) {
+      return true;
+    }
+
+    if (machineState.cpu > 90 || machineState.mem > 90) {
+      return true;
+    }
+
+    for (let i = 0; i < machineState.disk.length; ++i) {
+      const disk = machineState.disk[i];
+      if (disk.usage > 90) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
   return (
     <div className={styles.root}>
       <Row gutter={[12, 12]} justify="start">
-        {states?.map((p: API.MachineState) => {
+        {states?.map((m: API.MachineState) => {
           return (
             <Col span={6} className={styles.col}>
-              <Card
-                className={styles.card}
-                key={p.name}
-                title={p.name}
-                bordered={false}
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Card: {
+                      headerBg: isAlarming(m) ? "#FF0000" : "orange",
+                    },
+                  },
+                }}
               >
-                <div className={styles.cardContent}>
-                  <Row className={styles.cardRow}>
-                    <Col span={8}>最近心跳💓</Col>
-                    <Col span={16}>{p.last}</Col>
-                  </Row>
-                  <Row className={styles.cardRow}>
-                    <Col span={8}>CPU占用率</Col>
-                    <Col span={16} className={styles.progress}>
-                      <Progress
-                        strokeColor={strokeColor}
-                        percent={p.cpu}
-                        showInfo={false}
-                      />
-                      <div className={styles.progressNum}>
-                        {formatNumber(p.cpu)}
-                      </div>
-                    </Col>
-                  </Row>
-                  <Row className={styles.cardRow}>
-                    <Col span={8}>内存占用率</Col>
-                    <Col span={16} className={styles.progress}>
-                      <Progress
-                        strokeColor={strokeColor}
-                        percent={p.mem}
-                        showInfo={false}
-                      />
-                      <div className={styles.progressNum}>
-                        {formatNumber(p.mem)}
-                      </div>
-                    </Col>
-                  </Row>
-                  {p.disk.map((d) => (
+                <Card
+                  className={
+                    isAlarming(m) ? styles.cardAlarming : styles.cardNormal
+                  }
+                  key={m.name}
+                  title={m.name}
+                  bordered={false}
+                  extra={
+                    isOffline(m) ? (
+                      <DisconnectOutlined className={styles.cardIconError} />
+                    ) : (
+                      <WifiOutlined className={styles.cardIconOK} />
+                    )
+                  }
+                >
+                  <div className={styles.cardContent}>
                     <Row className={styles.cardRow}>
-                      <Col span={8}>{`${d.mount} 占用率`}</Col>
+                      <Col span={8}>最近心跳</Col>
+                      <Col span={16}>{m.last}</Col>
+                    </Row>
+                    <Row className={styles.cardRow}>
+                      <Col span={8}>CPU占用率</Col>
                       <Col span={16} className={styles.progress}>
                         <Progress
                           strokeColor={strokeColor}
-                          percent={d.usage}
+                          percent={m.cpu}
                           showInfo={false}
                         />
                         <div className={styles.progressNum}>
-                          {formatNumber(d.usage)}
+                          {formatNumber(m.cpu)}
                         </div>
                       </Col>
                     </Row>
-                  ))}
-                </div>
-              </Card>
+                    <Row className={styles.cardRow}>
+                      <Col span={8}>内存占用率</Col>
+                      <Col span={16} className={styles.progress}>
+                        <Progress
+                          strokeColor={strokeColor}
+                          percent={m.mem}
+                          showInfo={false}
+                        />
+                        <div className={styles.progressNum}>
+                          {formatNumber(m.mem)}
+                        </div>
+                      </Col>
+                    </Row>
+                    {m.disk.map((d) => (
+                      <Row key={d.mount} className={styles.cardRow}>
+                        <Col span={8}>{`${d.mount} 占用率`}</Col>
+                        <Col span={16} className={styles.progress}>
+                          <Progress
+                            strokeColor={strokeColor}
+                            percent={d.usage}
+                            showInfo={false}
+                          />
+                          <div className={styles.progressNum}>
+                            {formatNumber(d.usage)}
+                          </div>
+                        </Col>
+                      </Row>
+                    ))}
+                  </div>
+                </Card>
+              </ConfigProvider>
             </Col>
           );
         })}

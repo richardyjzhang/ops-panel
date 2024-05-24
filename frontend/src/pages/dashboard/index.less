@@ -2,8 +2,20 @@
     padding: 2rem;
 }
 
-.card {
+.cardNormal {
     height: 22rem;
+    border: orange 2px dashed;
+
+    :global {
+        .ant-card-head-title {
+            color: black;
+        }
+    }
+}
+
+.cardAlarming {
+    height: 22rem;
+    border: red 2px dashed;
 
     :global {
         .ant-card-head-title {
@@ -14,6 +26,16 @@
 
 .cardContent {
     font-size: 1rem;
+}
+
+.cardIconOK {
+    font-size: 1.2rem;
+    color: rgb(20, 20, 20);
+}
+
+.cardIconError {
+    font-size: 1.2rem;
+    color: red;
 }
 
 .cardRow {
