@@ -53,7 +53,7 @@ const DashboardPage: React.FC = () => {
                   </Row>
                   {p.disk.map((d) => (
                     <Row className={styles.cardRow}>
-                      <Col span={8}>{`硬盘 ${d.mount} 使用率`}</Col>
+                      <Col span={8}>{`${d.mount} 占用率`}</Col>
                       <Col span={16}>
                         <Progress percent={d.usage} />
                       </Col>
