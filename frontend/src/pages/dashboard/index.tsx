@@ -95,9 +95,9 @@ const DashboardPage: React.FC = () => {
                   bordered={false}
                   extra={
                     isOffline(m) ? (
-                      <DisconnectOutlined className={styles.cardIconError} />
+                      <DisconnectOutlined className={styles.cardIcon} />
                     ) : (
-                      <WifiOutlined className={styles.cardIconOK} />
+                      <WifiOutlined className={styles.cardIcon} />
                     )
                   }
                 >
