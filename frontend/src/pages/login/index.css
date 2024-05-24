@@ -2,7 +2,6 @@
     background-size: cover;
     background-position: center;
     height: 100vh;
-    background-image: url('https://bing.img.run/uhd.php');
 }
 
 .loginWrapper {
@@ -33,7 +32,7 @@
 }
 
 .loginTitleText {
-    font-size: 2rem;
+    font-size: 1.4rem;
     color: orange;
 }
 

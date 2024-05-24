@@ -46,7 +46,7 @@ const LoginPage: React.FC = () => {
         <div className={styles.loginCard}>
           <div className={styles.loginTitle}>
             <img className={styles.loginIcon} src="icon.png" />
-            <div className={styles.loginTitleText}>服务器运维管理</div>
+            <div className={styles.loginTitleText}>Server Monitor Panel</div>
           </div>
           <Divider className={styles.loginDivider} />
           <Form onFinish={onFormFinished}>
