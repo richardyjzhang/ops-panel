@@ -72,89 +72,87 @@ const DashboardPage: React.FC = () => {
   };
 
   return (
-    <div className={styles.root}>
-      <Row gutter={[12, 12]} justify="start">
-        {states?.map((m: API.MachineState) => {
-          return (
-            <Col span={6} className={styles.col}>
-              <ConfigProvider
-                theme={{
-                  components: {
-                    Card: {
-                      headerBg: isAlarming(m) ? "#FF0000" : "orange",
-                    },
+    <Row className={styles.root} gutter={[24, 24]} justify="center">
+      {states?.map((m: API.MachineState) => {
+        return (
+          <Col className={styles.col}>
+            <ConfigProvider
+              theme={{
+                components: {
+                  Card: {
+                    headerBg: isAlarming(m) ? "#FF0000" : "orange",
                   },
-                }}
+                },
+              }}
+            >
+              <Card
+                className={
+                  isAlarming(m) ? styles.cardAlarming : styles.cardNormal
+                }
+                key={m.name}
+                title={m.name}
+                bordered={false}
+                extra={
+                  isOffline(m) ? (
+                    <DisconnectOutlined className={styles.cardIcon} />
+                  ) : (
+                    <WifiOutlined className={styles.cardIcon} />
+                  )
+                }
               >
-                <Card
-                  className={
-                    isAlarming(m) ? styles.cardAlarming : styles.cardNormal
-                  }
-                  key={m.name}
-                  title={m.name}
-                  bordered={false}
-                  extra={
-                    isOffline(m) ? (
-                      <DisconnectOutlined className={styles.cardIcon} />
-                    ) : (
-                      <WifiOutlined className={styles.cardIcon} />
-                    )
-                  }
-                >
-                  <div className={styles.cardContent}>
-                    <Row className={styles.cardRow}>
-                      <Col span={8}>最近心跳</Col>
-                      <Col span={16}>{m.last}</Col>
-                    </Row>
-                    <Row className={styles.cardRow}>
-                      <Col span={8}>CPU占用率</Col>
+                <div className={styles.cardContent}>
+                  <Row className={styles.cardRow}>
+                    <Col span={8}>最近心跳</Col>
+                    <Col span={16}>{m.last}</Col>
+                  </Row>
+                  <Row className={styles.cardRow}>
+                    <Col span={8}>CPU占用率</Col>
+                    <Col span={16} className={styles.progress}>
+                      <Progress
+                        strokeColor={strokeColor}
+                        percent={m.cpu}
+                        showInfo={false}
+                      />
+                      <div className={styles.progressNum}>
+                        {formatNumber(m.cpu)}
+                      </div>
+                    </Col>
+                  </Row>
+                  <Row className={styles.cardRow}>
+                    <Col span={8}>内存占用率</Col>
+                    <Col span={16} className={styles.progress}>
+                      <Progress
+                        strokeColor={strokeColor}
+                        percent={m.mem}
+                        showInfo={false}
+                      />
+                      <div className={styles.progressNum}>
+                        {formatNumber(m.mem)}
+                      </div>
+                    </Col>
+                  </Row>
+                  {m.disk.map((d) => (
+                    <Row key={d.mount} className={styles.cardRow}>
+                      <Col span={8}>{`${d.mount} 占用率`}</Col>
                       <Col span={16} className={styles.progress}>
                         <Progress
                           strokeColor={strokeColor}
-                          percent={m.cpu}
+                          percent={d.usage}
                           showInfo={false}
                         />
                         <div className={styles.progressNum}>
-                          {formatNumber(m.cpu)}
+                          {formatNumber(d.usage)}
                         </div>
                       </Col>
                     </Row>
-                    <Row className={styles.cardRow}>
-                      <Col span={8}>内存占用率</Col>
-                      <Col span={16} className={styles.progress}>
-                        <Progress
-                          strokeColor={strokeColor}
-                          percent={m.mem}
-                          showInfo={false}
-                        />
-                        <div className={styles.progressNum}>
-                          {formatNumber(m.mem)}
-                        </div>
-                      </Col>
-                    </Row>
-                    {m.disk.map((d) => (
-                      <Row key={d.mount} className={styles.cardRow}>
-                        <Col span={8}>{`${d.mount} 占用率`}</Col>
-                        <Col span={16} className={styles.progress}>
-                          <Progress
-                            strokeColor={strokeColor}
-                            percent={d.usage}
-                            showInfo={false}
-                          />
-                          <div className={styles.progressNum}>
-                            {formatNumber(d.usage)}
-                          </div>
-                        </Col>
-                      </Row>
-                    ))}
-                  </div>
-                </Card>
-              </ConfigProvider>
-            </Col>
-          );
-        })}
-      </Row>
-    </div>
+                  ))}
+                </div>
+              </Card>
+            </ConfigProvider>
+          </Col>
+        );
+      })}
+    </Row>
   );
 };
 
