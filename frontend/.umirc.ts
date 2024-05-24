@@ -1,6 +1,8 @@
 import { defineConfig } from "umi";
 
 export default defineConfig({
+  title: "Server Monitor Panel",
+  favicons: ["favicon.png"],
   routes: [
     {
       path: "/",
