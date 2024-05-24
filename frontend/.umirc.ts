@@ -30,11 +30,12 @@ export default defineConfig({
     type: "hash",
   },
   proxy: {
-    "/api": {
+    "/api/ops-panel": {
       target: "http://127.0.0.1:5000/",
       changeOrigin: true,
-      pathRewrite: { "^/api": "" },
+      pathRewrite: { "^/api/ops-panel": "" },
     },
   },
+  publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
   npmClient: "yarn",
 });

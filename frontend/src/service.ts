@@ -2,7 +2,7 @@ import request from "@/utils/request";
 
 // 登录请求
 export async function postLoginRequest(user: API.LoginUser) {
-  const response = await request("/api/login", {
+  const response = await request("/api/ops-panel/login", {
     method: "POST",
     data: user,
   });
@@ -11,7 +11,7 @@ export async function postLoginRequest(user: API.LoginUser) {
 
 // 登出请求
 export async function postLogoutRequest() {
-  const response = await request("/api/logout", {
+  const response = await request("/api/ops-panel/logout", {
     method: "POST",
   });
   return response;
@@ -19,6 +19,6 @@ export async function postLogoutRequest() {
 
 // 获取服务器最新状态
 export async function fetchStatusRequest() {
-  const response = await request("/api/status");
+  const response = await request("/api/ops-panel/status");
   return response;
 }
