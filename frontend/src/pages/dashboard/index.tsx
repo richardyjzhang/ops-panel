@@ -22,6 +22,25 @@ const DashboardPage: React.FC = () => {
     };
   }, []);
 
+  // 进度条配色
+  const strokeColor = {
+    "0%": "#FFA500",
+    "20%": "#FFA500",
+    "50%": "#FF7F50",
+    "100%": "#FF0000",
+  };
+
+  // 格式化数字
+  const formatNumber = (num: number) => {
+    if (num < 10) {
+      return `${num.toFixed(2)} %`;
+    } else if (num < 100) {
+      return `${num.toFixed(1)} %`;
+    } else {
+      return "100 %";
+    }
+  };
+
   return (
     <div className={styles.root}>
       <Row gutter={[12, 12]} justify="start">
@@ -41,21 +60,42 @@ const DashboardPage: React.FC = () => {
                   </Row>
                   <Row className={styles.cardRow}>
                     <Col span={8}>CPU占用率</Col>
-                    <Col span={16}>
-                      <Progress percent={p.cpu} />
+                    <Col span={16} className={styles.progress}>
+                      <Progress
+                        strokeColor={strokeColor}
+                        percent={p.cpu}
+                        showInfo={false}
+                      />
+                      <div className={styles.progressNum}>
+                        {formatNumber(p.cpu)}
+                      </div>
                     </Col>
                   </Row>
                   <Row className={styles.cardRow}>
                     <Col span={8}>内存占用率</Col>
-                    <Col span={16}>
-                      <Progress percent={p.mem} />
+                    <Col span={16} className={styles.progress}>
+                      <Progress
+                        strokeColor={strokeColor}
+                        percent={p.mem}
+                        showInfo={false}
+                      />
+                      <div className={styles.progressNum}>
+                        {formatNumber(p.mem)}
+                      </div>
                     </Col>
                   </Row>
                   {p.disk.map((d) => (
                     <Row className={styles.cardRow}>
                       <Col span={8}>{`${d.mount} 占用率`}</Col>
-                      <Col span={16}>
-                        <Progress percent={d.usage} />
+                      <Col span={16} className={styles.progress}>
+                        <Progress
+                          strokeColor={strokeColor}
+                          percent={d.usage}
+                          showInfo={false}
+                        />
+                        <div className={styles.progressNum}>
+                          {formatNumber(d.usage)}
+                        </div>
                       </Col>
                     </Row>
                   ))}
