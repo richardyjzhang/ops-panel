@@ -15,7 +15,7 @@
           :options="menuOptions"
           :collapsed-width="64"
           :collapsed-icon-size="22"
-          v-bind:value="curRouter"
+          v-bind:value="$route.path"
           @update:value="handleMenuSelect"
          />
       </n-layout-sider>
@@ -53,8 +53,6 @@ const menuOptions = [
 ]
 
 const router = useRouter()
-
-const curRouter = ref(router.currentRoute.value.path);
 
 function handleMenuSelect(key: string) {
   router.push(key)
