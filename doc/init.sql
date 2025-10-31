@@ -17,6 +17,7 @@ CREATE TABLE `machine`
 CREATE TABLE `machine_disk`
 (
     `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `machine_id` INT NOT NULL, -- 所在机器ID
     `name` VARCHAR(255) NOT NULL, -- 盘符或挂载路径
     `disk_usage` FLOAT NOT NULL -- 当前占用率，0-1小数
 );
