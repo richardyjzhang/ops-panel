@@ -1,3 +1,3 @@
 <template>
-    HHHH
+服务类型管理
 </template>

@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory } from 'vue-router'
 import MainLayout from '@/layouts/MainLayout.vue'
-import TestView from '../views/TestView.vue'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -8,7 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: TestView,
+      redirect: '/main/groups',
     },
     {
       path: '/main',
@@ -16,9 +15,19 @@ const router = createRouter({
       component: MainLayout,
       children: [
         {
-          path: '/main/test',
-          name: 'test-view',
-          component: () => import('../views/TestView.vue'),
+          path: '/main/groups',
+          name: 'group-management',
+          component: () => import('../views/GroupManagement.vue'),
+        },
+        {
+          path: '/main/machines',
+          name: 'machine-management',
+          component: () => import('../views/MachineManagement.vue'),
+        },
+        {
+          path: '/main/service-types',
+          name: 'service-type-management',
+          component: () => import('../views/ServiceTypeManagement.vue'),
         },
       ],
     },
