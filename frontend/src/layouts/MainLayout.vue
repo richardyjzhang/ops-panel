@@ -1,28 +1,62 @@
 <template>
   <div class="h-screen flex flex-col">
     <nav-bar />
-    <div class="grow flex shadow-md">
-      <div
-        :class="[
-          collapsed ? 'w-0' : 'w-60',
-          'h-full bg-red-300',
-          'transition-all duration-300 ease-in-out',
-        ]"
-      ></div>
-      <router-view />
-    </div>
+    <n-layout has-sider>
+      <n-layout-sider
+        collapse-mode="width"
+        bordered
+        show-trigger="arrow-circle"
+        :collapsed-width="64"
+        @collapse="menuCollapsed = true"
+        @expand="menuCollapsed = false"
+      >
+        <n-menu
+          :collapsed="menuCollapsed"
+          :options="menuOptions"
+          :collapsed-width="64"
+          :collapsed-icon-size="22"
+          v-bind:value="curRouter"
+          @update:value="handleMenuSelect"
+         />
+      </n-layout-sider>
+      <n-layout-content>
+        <router-view />
+      </n-layout-content>
+    </n-layout>
   </div>
 </template>
 
 <script setup lang="ts">
-import { storeToRefs } from 'pinia'
-import { useMenuCollapseStore } from '@/stores/layout'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router';
+import { NLayout, NLayoutSider, NLayoutContent, NMenu } from 'naive-ui'
+import { renderIcon } from './utils';
+import { LayoutGrid, HeartRateMonitor, BrandDocker } from '@vicons/tabler';
 import NavBar from './components/NavBar.vue'
 
-const menuCollapsed = useMenuCollapseStore()
-const { collapsed } = storeToRefs(menuCollapsed)
-</script>
+const menuCollapsed = ref(false)
 
-<style>
-@import 'tailwindcss';
-</style>
+const menuOptions = [
+  {
+    label: '设备分组管理',
+    key: '/main/groups',
+    icon: renderIcon(LayoutGrid),
+  }, {
+    label: '计算设备管理',
+    key: '/main/machines',
+    icon: renderIcon(HeartRateMonitor),
+  }, {
+    label: '服务类型管理',
+    key: '/main/service-types',
+    icon: renderIcon(BrandDocker),
+  }
+]
+
+const router = useRouter()
+
+const curRouter = ref(router.currentRoute.value.path);
+
+function handleMenuSelect(key: string) {
+  router.push(key)
+}
+</script>
