@@ -16,17 +16,17 @@ const router = createRouter({
       children: [
         {
           path: '/main/groups',
-          name: 'group-management',
+          name: '设备分组管理',
           component: () => import('../views/GroupManagement.vue'),
         },
         {
           path: '/main/machines',
-          name: 'machine-management',
+          name: '计算设备管理',
           component: () => import('../views/MachineManagement.vue'),
         },
         {
           path: '/main/service-types',
-          name: 'service-type-management',
+          name: '服务类型管理',
           component: () => import('../views/ServiceTypeManagement.vue'),
         },
       ],
