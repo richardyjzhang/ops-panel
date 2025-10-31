@@ -41,6 +41,7 @@ CREATE TABLE `service`
 (
     `id` INT PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL,
+    `machine_id` INT NOT NULL, -- 所在机器ID
     `type_id` INT NOT NULL, -- service_type表主键，运行模式
     `online` TINYINT NOT NULL -- 是否正常运行，0凉了，1运行中
 );
