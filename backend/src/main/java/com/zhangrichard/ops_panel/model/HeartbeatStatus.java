@@ -7,6 +7,8 @@ import java.util.List;
 @Data
 public class HeartbeatStatus {
 
+    private String time;
+
     private Integer id;
 
     private Double cpuUsage;
