@@ -1,4 +1,4 @@
 declare interface MachineGroup {
-    id: number;
-    name: string;
+    id?: number;
+    name?: string;
 }
