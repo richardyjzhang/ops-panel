@@ -14,3 +14,7 @@ export async function updateOneMachineGroupData(data:MachineGroup) : Promise<Mac
     const response = await put<MachineGroup>(`/machine-groups/${data.id}`, data);
     return response;
 }
+
+export async function deleteOneMachineGroupData(data: MachineGroup) {
+    await del(`/machine-groups/${data.id}`);
+}

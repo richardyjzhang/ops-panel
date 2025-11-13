@@ -1,12 +1,37 @@
 <template>
   <div class="flex gap-4">
-    <n-button type="primary" text @click="handleEdit">编辑</n-button>
-    <n-button type="error" text @click="handleDelete">删除</n-button>
+    <n-button type="primary" text @click="handleEdit">
+      <template #icon>
+        <n-icon>
+          <Edit />
+        </n-icon>
+      </template>
+      编辑
+    </n-button>
+    <n-popconfirm positive-text="确认" negative-text="取消" @positive-click="handleDelete">
+      <template #icon>
+        <n-icon color="red">
+          <AlertCircle />
+        </n-icon>
+      </template>
+      <template #trigger>
+        <n-button type="error" text>
+          <template #icon>
+            <n-icon>
+              <Trash />
+            </n-icon>
+          </template>
+          删除
+        </n-button>
+      </template>
+      确认删除该项？
+    </n-popconfirm>
   </div>
 </template>
 
 <script setup lang="ts">
-import { NButton } from 'naive-ui'
+import { NButton, NPopconfirm, NIcon } from 'naive-ui'
+import { AlertCircle, Edit, Trash } from '@vicons/tabler'
 
 const emit = defineEmits<{
   edit: []

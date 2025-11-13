@@ -28,6 +28,7 @@ import {
   fetchAllMachineGroupData,
   addOneMachineGroupData,
   updateOneMachineGroupData,
+  deleteOneMachineGroupData,
 } from '@/services/MachineGroupService'
 import MachineGroupForm from './components/MachineGroupForm.vue'
 import MachineGroupTableAction from './components/MachineGroupTableAction.vue'
@@ -49,6 +50,9 @@ const columns: DataTableColumns<MachineGroup> = [
         onEdit: () => {
           handleEditClick(row)
         },
+        onDelete: () => {
+          deleteOneMachineGroup(row)
+        },
       })
     },
   },
@@ -56,7 +60,7 @@ const columns: DataTableColumns<MachineGroup> = [
 
 const machineGroups = ref<MachineGroup[]>([])
 
-const showModal = ref(true)
+const showModal = ref(false)
 
 const curMachineGroup = ref<MachineGroup>({})
 
@@ -88,6 +92,11 @@ async function addOneMachineGroup(data: MachineGroup) {
 async function updateOneMachineGroup(data: MachineGroup) {
   closeModal()
   await updateOneMachineGroupData(data)
+  await fetchAllMachineGroup()
+}
+
+async function deleteOneMachineGroup(data: MachineGroup) {
+  await deleteOneMachineGroupData(data)
   await fetchAllMachineGroup()
 }
 
