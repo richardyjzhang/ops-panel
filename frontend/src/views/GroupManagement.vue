@@ -10,7 +10,11 @@
   <div class="mb-4"></div>
   <n-data-table :data="machineGroups" :columns="columns" />
   <n-modal v-model:show="showModal">
-    <MachineGroupForm :curMachineGroup="curMachineGroup" @add="addOneMachineGroup" />
+    <MachineGroupForm
+      :curMachineGroup="curMachineGroup"
+      @add="addOneMachineGroup"
+      @cancel="closeModal"
+    />
   </n-modal>
 </template>
 
@@ -54,6 +58,10 @@ function handleAddClick() {
   curMachineGroup.value = {}
 }
 
+function closeModal() {
+  showModal.value = false
+}
+
 async function fetchAllMachineGroup() {
   const response = await fetchAllMachineGroupData()
   machineGroups.value = response
@@ -61,7 +69,8 @@ async function fetchAllMachineGroup() {
 
 async function addOneMachineGroup(data: MachineGroup) {
   await addOneMachineGroupData(data)
-  fetchAllMachineGroup()
+  await fetchAllMachineGroup()
+  closeModal()
 }
 
 onMounted(() => {
