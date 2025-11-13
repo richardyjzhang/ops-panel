@@ -37,7 +37,7 @@ import type { FormInst, FormRules } from 'naive-ui'
 import { Check, X } from '@vicons/tabler'
 import { ref } from 'vue'
 
-defineProps<{ curMachineGroup: MachineGroup }>()
+const props = defineProps<{ curMachineGroup: MachineGroup }>()
 
 const emit = defineEmits<{
   add: [data: MachineGroup]
@@ -47,7 +47,7 @@ const emit = defineEmits<{
 
 const formRef = ref<FormInst | null>(null)
 
-const formModel = ref<MachineGroup>({})
+const formModel = ref<MachineGroup>(props.curMachineGroup)
 
 const rules: FormRules = {
   name: {

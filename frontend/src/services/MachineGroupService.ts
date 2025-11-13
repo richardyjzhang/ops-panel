@@ -9,3 +9,8 @@ export async function addOneMachineGroupData(data: MachineGroup): Promise<Machin
     const response = await post<MachineGroup>('/machine-groups', data);
     return response;
 }
+
+export async function updateOneMachineGroupData(data:MachineGroup) : Promise<MachineGroup> {
+    const response = await put<MachineGroup>(`/machine-groups/${data.id}`, data);
+    return response;
+}

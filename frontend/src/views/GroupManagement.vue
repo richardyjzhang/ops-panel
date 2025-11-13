@@ -13,6 +13,7 @@
     <MachineGroupForm
       :curMachineGroup="curMachineGroup"
       @add="addOneMachineGroup"
+      @update="updateOneMachineGroup"
       @cancel="closeModal"
     />
   </n-modal>
@@ -20,13 +21,17 @@
 
 <script setup lang="ts">
 import type { DataTableColumns } from 'naive-ui'
-import { NDataTable, NButton, NIcon, NModal, useMessage } from 'naive-ui'
+import { NDataTable, NButton, NIcon, NModal } from 'naive-ui'
 import { Plus } from '@vicons/tabler'
 import { h, onMounted, ref } from 'vue'
-import { fetchAllMachineGroupData, addOneMachineGroupData } from '@/services/MachineGroupService'
+import {
+  fetchAllMachineGroupData,
+  addOneMachineGroupData,
+  updateOneMachineGroupData,
+} from '@/services/MachineGroupService'
 import MachineGroupForm from './components/MachineGroupForm.vue'
+import MachineGroupTableAction from './components/MachineGroupTableAction.vue'
 
-const message = useMessage()
 const columns: DataTableColumns<MachineGroup> = [
   {
     title: '分组ID',
@@ -40,8 +45,10 @@ const columns: DataTableColumns<MachineGroup> = [
     title: '操作',
     key: 'actions',
     render: (row) => {
-      return h(NButton, {
-        onClick: () => message.info(row.name || ''),
+      return h(MachineGroupTableAction, {
+        onEdit: () => {
+          handleEditClick(row)
+        },
       })
     },
   },
@@ -54,8 +61,13 @@ const showModal = ref(true)
 const curMachineGroup = ref<MachineGroup>({})
 
 function handleAddClick() {
-  showModal.value = true
   curMachineGroup.value = {}
+  showModal.value = true
+}
+
+function handleEditClick(data: MachineGroup) {
+  curMachineGroup.value = data
+  showModal.value = true
 }
 
 function closeModal() {
@@ -68,9 +80,15 @@ async function fetchAllMachineGroup() {
 }
 
 async function addOneMachineGroup(data: MachineGroup) {
+  closeModal()
   await addOneMachineGroupData(data)
   await fetchAllMachineGroup()
+}
+
+async function updateOneMachineGroup(data: MachineGroup) {
   closeModal()
+  await updateOneMachineGroupData(data)
+  await fetchAllMachineGroup()
 }
 
 onMounted(() => {
