@@ -17,7 +17,12 @@ const router = createRouter({
         {
           path: '/main/groups',
           name: '设备分组管理',
-          component: () => import('../views/GroupManagement.vue'),
+          component: () => import('../views/MachineGroupManagement.vue'),
+        },
+        {
+          path: '/main/machine-types',
+          name: '设备类型管理',
+          component: () => import('../views/MachineTypeManagement.vue'),
         },
         {
           path: '/main/machines',

@@ -10,8 +10,8 @@
   <div class="mb-4"></div>
   <n-data-table :data="machineGroups" :columns="columns" />
   <n-modal v-model:show="showModal">
-    <MachineGroupForm
-      :curMachineGroup="curMachineGroup"
+    <MyEasyForm
+      :curData="curMachineGroup"
       @add="addOneMachineGroup"
       @update="updateOneMachineGroup"
       @cancel="closeModal"
@@ -30,8 +30,8 @@ import {
   updateOneMachineGroupData,
   deleteOneMachineGroupData,
 } from '@/services/MachineGroupService'
-import MachineGroupForm from './components/MachineGroupForm.vue'
-import MachineGroupTableAction from './components/MachineGroupTableAction.vue'
+import MyEasyForm from './components/MyEasyForm.vue'
+import MyTableAction from './components/MyTableAction.vue'
 
 const columns: DataTableColumns<MachineGroup> = [
   {
@@ -46,7 +46,7 @@ const columns: DataTableColumns<MachineGroup> = [
     title: '操作',
     key: 'actions',
     render: (row) => {
-      return h(MachineGroupTableAction, {
+      return h(MyTableAction, {
         onEdit: () => {
           handleEditClick(row)
         },

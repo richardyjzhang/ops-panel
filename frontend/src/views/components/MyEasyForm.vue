@@ -37,17 +37,17 @@ import type { FormInst, FormRules } from 'naive-ui'
 import { Check, X } from '@vicons/tabler'
 import { ref } from 'vue'
 
-const props = defineProps<{ curMachineGroup: MachineGroup }>()
+const props = defineProps<{ curData: MyIdNameInterface }>()
 
 const emit = defineEmits<{
-  add: [data: MachineGroup]
-  update: [data: MachineGroup]
+  add: [data: MyIdNameInterface]
+  update: [data: MyIdNameInterface]
   cancel: []
 }>()
 
 const formRef = ref<FormInst | null>(null)
 
-const formModel = ref<MachineGroup>(props.curMachineGroup)
+const formModel = ref<MyIdNameInterface>(props.curData)
 
 const rules: FormRules = {
   name: {
@@ -71,13 +71,13 @@ function handleSubmit(e: MouseEvent) {
   })
 
   if (formModel.value.id !== undefined) {
-    const newMachineGroup = { ...formModel.value }
-    emit('update', newMachineGroup)
+    const newMyIdNameInterface = { ...formModel.value }
+    emit('update', newMyIdNameInterface)
   } else {
-    const newMachineGroup: MachineGroup = {
+    const newMyIdNameInterface: MyIdNameInterface = {
       name: formModel.value.name,
     }
-    emit('add', newMachineGroup)
+    emit('add', newMyIdNameInterface)
   }
 }
 </script>
