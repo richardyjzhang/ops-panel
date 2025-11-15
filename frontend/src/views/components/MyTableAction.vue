@@ -1,5 +1,13 @@
 <template>
   <div class="flex gap-4">
+    <n-button v-if="showDetail" type="primary" text @click="handleEdit">
+      <template #icon>
+        <n-icon>
+          <DeviceDesktop />
+        </n-icon>
+      </template>
+      详情
+    </n-button>
     <n-button type="primary" text @click="handleEdit">
       <template #icon>
         <n-icon>
@@ -31,12 +39,19 @@
 
 <script setup lang="ts">
 import { NButton, NPopconfirm, NIcon } from 'naive-ui'
-import { AlertCircle, Edit, Trash } from '@vicons/tabler'
+import { AlertCircle, Edit, Trash, DeviceDesktop } from '@vicons/tabler'
+
+const props = defineProps<{ showDetail?: boolean }>()
 
 const emit = defineEmits<{
+  detail: []
   edit: []
   delete: []
 }>()
+
+function handleDetail() {
+  emit('detail')
+}
 
 function handleEdit() {
   emit('edit')
