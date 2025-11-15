@@ -8,7 +8,9 @@
     新增
   </n-button>
   <div class="mb-4"></div>
-  <n-data-table :data="machineTypes" :columns="columns" />
+  <n-spin :show="loading">
+    <n-data-table :data="machineTypes" :columns="columns" />
+  </n-spin>
   <n-modal v-model:show="showModal">
     <MyEasyForm
       :resource="`设备类型`"
@@ -22,7 +24,7 @@
 
 <script setup lang="ts">
 import type { DataTableColumns } from 'naive-ui'
-import { NDataTable, NButton, NIcon, NModal, useLoadingBar } from 'naive-ui'
+import { NDataTable, NButton, NIcon, NModal, useLoadingBar, NSpin } from 'naive-ui'
 import { Plus } from '@vicons/tabler'
 import { h, onMounted, ref } from 'vue'
 import {
@@ -35,6 +37,8 @@ import MyEasyForm from './components/MyEasyForm.vue'
 import MyTableAction from './components/MyTableAction.vue'
 
 const loadingBar = useLoadingBar()
+
+const loading = ref(false)
 
 const columns: DataTableColumns<MachineType> = [
   {
@@ -86,34 +90,42 @@ async function refreshData() {
   machineTypes.value = response
 }
 
-async function fetchAllMachineType() {
+async function loadingWrapper(actions: () => {}) {
+  loading.value = true
   loadingBar.start()
-  const response = await fetchAllMachineTypeData()
-  machineTypes.value = response
+  await actions()
   loadingBar.finish()
+  loading.value = false
+}
+
+async function fetchAllMachineType() {
+  loadingWrapper(async () => {
+    const response = await fetchAllMachineTypeData()
+    machineTypes.value = response
+  })
 }
 
 async function addOneMachineType(data: MachineType) {
-  loadingBar.start()
-  closeModal()
-  await addOneMachineTypeData(data)
-  await refreshData()
-  loadingBar.finish()
+  loadingWrapper(async () => {
+    closeModal()
+    await addOneMachineTypeData(data)
+    await refreshData()
+  })
 }
 
 async function updateOneMachineType(data: MachineType) {
-  loadingBar.start()
-  closeModal()
-  await updateOneMachineTypeData(data)
-  await refreshData()
-  loadingBar.finish()
+  loadingWrapper(async () => {
+    closeModal()
+    await updateOneMachineTypeData(data)
+    await refreshData()
+  })
 }
 
 async function deleteOneMachineType(data: MachineType) {
-  loadingBar.start()
-  await deleteOneMachineTypeData(data)
-  await refreshData()
-  loadingBar.finish()
+  loadingWrapper(async () => {
+    await deleteOneMachineTypeData(data)
+    await refreshData()
+  })
 }
 
 onMounted(() => {

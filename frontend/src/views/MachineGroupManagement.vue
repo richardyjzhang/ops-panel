@@ -8,7 +8,9 @@
     新增
   </n-button>
   <div class="mb-4"></div>
-  <n-data-table :data="machineGroups" :columns="columns" />
+  <n-spin :show="loading">
+    <n-data-table :data="machineGroups" :columns="columns" />
+  </n-spin>
   <n-modal v-model:show="showModal">
     <MyEasyForm
       :resource="`设备分组`"
@@ -22,7 +24,7 @@
 
 <script setup lang="ts">
 import type { DataTableColumns } from 'naive-ui'
-import { NDataTable, NButton, NIcon, NModal, useLoadingBar } from 'naive-ui'
+import { NDataTable, NButton, NIcon, NModal, useLoadingBar, NSpin } from 'naive-ui'
 import { Plus } from '@vicons/tabler'
 import { h, onMounted, ref } from 'vue'
 import {
@@ -35,6 +37,8 @@ import MyEasyForm from './components/MyEasyForm.vue'
 import MyTableAction from './components/MyTableAction.vue'
 
 const loadingBar = useLoadingBar()
+
+const loading = ref(false)
 
 const columns: DataTableColumns<MachineGroup> = [
   {
@@ -86,34 +90,42 @@ async function refreshData() {
   machineGroups.value = response
 }
 
-async function fetchAllMachineGroup() {
+async function loadingWrapper(actions: () => {}) {
+  loading.value = true
   loadingBar.start()
-  const response = await fetchAllMachineGroupData()
-  machineGroups.value = response
+  await actions()
   loadingBar.finish()
+  loading.value = false
+}
+
+async function fetchAllMachineGroup() {
+  loadingWrapper(async () => {
+    const response = await fetchAllMachineGroupData()
+    machineGroups.value = response
+  })
 }
 
 async function addOneMachineGroup(data: MachineGroup) {
-  loadingBar.start()
-  closeModal()
-  await addOneMachineGroupData(data)
-  await refreshData()
-  loadingBar.finish()
+  loadingWrapper(async () => {
+    closeModal()
+    await addOneMachineGroupData(data)
+    await refreshData()
+  })
 }
 
 async function updateOneMachineGroup(data: MachineGroup) {
-  loadingBar.start()
-  closeModal()
-  await updateOneMachineGroupData(data)
-  await refreshData()
-  loadingBar.finish()
+  loadingWrapper(async () => {
+    closeModal()
+    await updateOneMachineGroupData(data)
+    await refreshData()
+  })
 }
 
 async function deleteOneMachineGroup(data: MachineGroup) {
-  loadingBar.start()
-  await deleteOneMachineGroupData(data)
-  await refreshData()
-  loadingBar.finish()
+  loadingWrapper(async () => {
+    await deleteOneMachineGroupData(data)
+    await refreshData()
+  })
 }
 
 onMounted(() => {

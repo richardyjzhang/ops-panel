@@ -8,7 +8,9 @@
     新增
   </n-button>
   <div class="mb-4"></div>
-  <n-data-table :data="serviceTypes" :columns="columns" />
+  <n-spin :show="loading">
+    <n-data-table :data="serviceTypes" :columns="columns" />
+  </n-spin>
   <n-modal v-model:show="showModal">
     <MyEasyForm
       :resource="`服务类型`"
@@ -22,7 +24,7 @@
 
 <script setup lang="ts">
 import type { DataTableColumns } from 'naive-ui'
-import { NDataTable, NButton, NIcon, NModal, useLoadingBar } from 'naive-ui'
+import { NDataTable, NButton, NIcon, NModal, useLoadingBar, NSpin } from 'naive-ui'
 import { Plus } from '@vicons/tabler'
 import { h, onMounted, ref } from 'vue'
 import {
@@ -35,6 +37,8 @@ import MyEasyForm from './components/MyEasyForm.vue'
 import MyTableAction from './components/MyTableAction.vue'
 
 const loadingBar = useLoadingBar()
+
+const loading = ref(false)
 
 const columns: DataTableColumns<ServiceType> = [
   {
@@ -86,34 +90,42 @@ async function refreshData() {
   serviceTypes.value = response
 }
 
-async function fetchAllServiceType() {
+async function loadingWrapper(actions: () => {}) {
+  loading.value = true
   loadingBar.start()
-  const response = await fetchAllServiceTypeData()
-  serviceTypes.value = response
+  await actions()
   loadingBar.finish()
+  loading.value = false
+}
+
+async function fetchAllServiceType() {
+  loadingWrapper(async () => {
+    const response = await fetchAllServiceTypeData()
+    serviceTypes.value = response
+  })
 }
 
 async function addOneServiceType(data: ServiceType) {
-  loadingBar.start()
-  closeModal()
-  await addOneServiceTypeData(data)
-  await refreshData()
-  loadingBar.finish()
+  loadingWrapper(async () => {
+    closeModal()
+    await addOneServiceTypeData(data)
+    await refreshData()
+  })
 }
 
 async function updateOneServiceType(data: ServiceType) {
-  loadingBar.start()
-  closeModal()
-  await updateOneServiceTypeData(data)
-  await refreshData()
-  loadingBar.finish()
+  loadingWrapper(async () => {
+    closeModal()
+    await updateOneServiceTypeData(data)
+    await refreshData()
+  })
 }
 
 async function deleteOneServiceType(data: ServiceType) {
-  loadingBar.start()
-  await deleteOneServiceTypeData(data)
-  await refreshData()
-  loadingBar.finish()
+  loadingWrapper(async () => {
+    await deleteOneServiceTypeData(data)
+    await refreshData()
+  })
 }
 
 onMounted(() => {
