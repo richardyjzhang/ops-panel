@@ -1,10 +1,10 @@
 <template>
   <n-card
     class="w-2/3 max-w-lg"
-    :title="`${props.curData.id === undefined ? '添加' : '编辑'}${props.resource}`"
+    :title="`${curData.id === undefined ? '添加' : '编辑'}${resource}`"
   >
     <n-form ref="formRef" :rules="rules" :model="formModel">
-      <n-form-item path="id" label="分组ID">
+      <n-form-item path="id" :label="`${resource}ID`">
         <n-input-number
           disabled
           placeholder="系统自动生成"
@@ -13,8 +13,8 @@
           class="w-1/1"
         ></n-input-number>
       </n-form-item>
-      <n-form-item path="name" label="分组名称">
-        <n-input placeholder="请输入分组名称" v-model:value="formModel.name"></n-input>
+      <n-form-item path="name" :label="`${resource}名称`">
+        <n-input :placeholder="`请输入${resource}名称`" v-model:value="formModel.name"></n-input>
       </n-form-item>
     </n-form>
     <div class="w-full mt-4 flex flex-row-reverse gap-4">
