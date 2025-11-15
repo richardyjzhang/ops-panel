@@ -38,11 +38,11 @@ const loadingBar = useLoadingBar()
 
 const columns: DataTableColumns<MachineType> = [
   {
-    title: '分组ID',
+    title: '设备类型ID',
     key: 'id',
   },
   {
-    title: '分组名称',
+    title: '设备类型名称',
     key: 'name',
   },
   {
