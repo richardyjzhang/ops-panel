@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import type { DataTableColumns } from 'naive-ui'
-import { NDataTable, NButton, NIcon, NModal } from 'naive-ui'
+import { NDataTable, NButton, NIcon, NModal, useLoadingBar } from 'naive-ui'
 import { Plus } from '@vicons/tabler'
 import { h, onMounted, ref } from 'vue'
 import {
@@ -32,6 +32,8 @@ import {
 } from '@/services/MachineTypeService'
 import MyEasyForm from './components/MyEasyForm.vue'
 import MyTableAction from './components/MyTableAction.vue'
+
+const loadingBar = useLoadingBar()
 
 const columns: DataTableColumns<MachineType> = [
   {
@@ -78,26 +80,39 @@ function closeModal() {
   showModal.value = false
 }
 
-async function fetchAllMachineType() {
+async function refreshData() {
   const response = await fetchAllMachineTypeData()
   machineTypes.value = response
 }
 
+async function fetchAllMachineType() {
+  loadingBar.start()
+  const response = await fetchAllMachineTypeData()
+  machineTypes.value = response
+  loadingBar.finish()
+}
+
 async function addOneMachineType(data: MachineType) {
+  loadingBar.start()
   closeModal()
   await addOneMachineTypeData(data)
-  await fetchAllMachineType()
+  await refreshData()
+  loadingBar.finish()
 }
 
 async function updateOneMachineType(data: MachineType) {
+  loadingBar.start()
   closeModal()
   await updateOneMachineTypeData(data)
-  await fetchAllMachineType()
+  await refreshData()
+  loadingBar.finish()
 }
 
 async function deleteOneMachineType(data: MachineType) {
+  loadingBar.start()
   await deleteOneMachineTypeData(data)
-  await fetchAllMachineType()
+  await refreshData()
+  loadingBar.finish()
 }
 
 onMounted(() => {

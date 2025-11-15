@@ -21,7 +21,7 @@
 
 <script setup lang="ts">
 import type { DataTableColumns } from 'naive-ui'
-import { NDataTable, NButton, NIcon, NModal } from 'naive-ui'
+import { NDataTable, NButton, NIcon, NModal, useLoadingBar } from 'naive-ui'
 import { Plus } from '@vicons/tabler'
 import { h, onMounted, ref } from 'vue'
 import {
@@ -32,6 +32,8 @@ import {
 } from '@/services/MachineGroupService'
 import MyEasyForm from './components/MyEasyForm.vue'
 import MyTableAction from './components/MyTableAction.vue'
+
+const loadingBar = useLoadingBar()
 
 const columns: DataTableColumns<MachineGroup> = [
   {
@@ -78,26 +80,39 @@ function closeModal() {
   showModal.value = false
 }
 
-async function fetchAllMachineGroup() {
+async function refreshData() {
   const response = await fetchAllMachineGroupData()
   machineGroups.value = response
 }
 
+async function fetchAllMachineGroup() {
+  loadingBar.start()
+  const response = await fetchAllMachineGroupData()
+  machineGroups.value = response
+  loadingBar.finish()
+}
+
 async function addOneMachineGroup(data: MachineGroup) {
+  loadingBar.start()
   closeModal()
   await addOneMachineGroupData(data)
-  await fetchAllMachineGroup()
+  await refreshData()
+  loadingBar.finish()
 }
 
 async function updateOneMachineGroup(data: MachineGroup) {
+  loadingBar.start()
   closeModal()
   await updateOneMachineGroupData(data)
-  await fetchAllMachineGroup()
+  await refreshData()
+  loadingBar.finish()
 }
 
 async function deleteOneMachineGroup(data: MachineGroup) {
+  loadingBar.start()
   await deleteOneMachineGroupData(data)
-  await fetchAllMachineGroup()
+  await refreshData()
+  loadingBar.finish()
 }
 
 onMounted(() => {
