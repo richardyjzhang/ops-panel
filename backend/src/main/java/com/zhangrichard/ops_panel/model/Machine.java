@@ -32,12 +32,10 @@ public class Machine {
 
     @OneToMany(targetEntity = MachineDisk.class)
     @JoinColumn(name = "machineId", referencedColumnName = "id")
-    @JsonIgnore
     private List<MachineDisk> disks;
 
     @OneToMany(targetEntity = Service.class)
     @JoinColumn(name = "machineId", referencedColumnName = "id")
-    @JsonIgnore
     private List<Service> services;
 
 }
