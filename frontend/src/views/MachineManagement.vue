@@ -14,7 +14,7 @@
   <n-modal v-model:show="showModal">
     <MachineAddEditForm
       :resource="`计算设备`"
-      :curData="curServiceType"
+      :curData="curMachine"
       @add="addOneServiceType"
       @update="updateOneServiceType"
       @cancel="closeModal"
@@ -27,18 +27,26 @@ import type { DataTableColumns } from 'naive-ui'
 import { NDataTable, NButton, NIcon, NModal, useLoadingBar, NSpin, NTag } from 'naive-ui'
 import { Plus, AlertCircle, CircleCheck } from '@vicons/tabler'
 import { h, onMounted, ref } from 'vue'
+import { useMachineGroupsStore, useMachineTypesStore, useServiceTypesStore } from '@/stores/types'
 import {
   fetchAllMachineData,
   addOneMachineData,
   updateOneMachineData,
   deleteOneMachineData,
 } from '@/services/MachineService'
+import { fetchAllMachineGroupData } from '@/services/MachineGroupService'
+import { fetchAllMachineTypeData } from '@/services/MachineTypeService'
+import { fetchAllServiceTypeData } from '@/services/ServiceTypeService'
 import MachineAddEditForm from './components/MachineAddEditForm.vue'
 import MyTableAction from './components/MyTableAction.vue'
 
 const loadingBar = useLoadingBar()
 
 const loading = ref(false)
+
+const machineGroups = useMachineGroupsStore()
+const machineTypes = useMachineTypesStore()
+const serviceTypes = useServiceTypesStore()
 
 const columns: DataTableColumns<Machine> = [
   {
@@ -53,8 +61,9 @@ const columns: DataTableColumns<Machine> = [
     title: '所在设备分组',
     key: 'groupId',
     render: (row) => {
-      if (row.id) {
-        return machineGroupId2Name.value.get(row.id)
+      const _find = machineGroups.machineGroups.find((v) => v.id === row.groupId)
+      if (_find !== undefined) {
+        return _find.name
       }
       return '默认分组'
     },
@@ -63,10 +72,10 @@ const columns: DataTableColumns<Machine> = [
     title: '计算设备类型',
     key: 'typeId',
     render: (row) => {
-      if (row.id) {
-        return machineTypeId2Name.value.get(row.id)
+      const _find = machineTypes.machineTypes.find((v) => v.id === row.typeId)
+      if (_find !== undefined) {
+        return _find.name
       }
-      return '默认分组'
     },
   },
   {
@@ -118,16 +127,17 @@ const machines = ref<Machine[]>([])
 
 const showModal = ref(false)
 
-const machineGroupId2Name = ref<Map<number, string>>(new Map())
+const curMachine = ref<ServiceType>({})
 
-const machineTypeId2Name = ref<Map<number, string>>(new Map())
-
-const curServiceType = ref<ServiceType>({})
-
+// 综合判断设备运行状态
 function isMachineOK(machine: Machine) {
   const THRESHOLD = 0.9
 
   if (!machine.online) return false
+
+  if (machine.cpuUsage && machine.cpuUsage > THRESHOLD) return false
+
+  if (machine.ramUsage && machine.ramUsage > THRESHOLD) return false
 
   if (machine.disks !== undefined) {
     for (let i = 0; i < machine.disks.length; ++i) {
@@ -150,20 +160,24 @@ function isMachineOK(machine: Machine) {
   return true
 }
 
+// 添加机器，弹出弹窗
 function handleAddClick() {
-  curServiceType.value = {}
+  curMachine.value = {}
   showModal.value = true
 }
 
-function handleEditClick(data: ServiceType) {
-  curServiceType.value = data
+// 修改机器，弹出弹窗
+function handleEditClick(data: Machine) {
+  curMachine.value = data
   showModal.value = true
 }
 
+// 关闭新增/修改弹窗
 function closeModal() {
   showModal.value = false
 }
 
+// 增删改后刷新数据
 async function refreshData() {
   const response = await fetchAllMachineData()
   machines.value = response
@@ -177,11 +191,16 @@ async function loadingWrapper(actions: () => void) {
   loading.value = false
 }
 
-async function fetchAllMachine() {
-  loadingWrapper(async () => {
-    const response = await fetchAllMachineData()
-    machines.value = response
-  })
+// 获取类型枚举数据
+async function fetchAllTypesData() {
+  const groups = await fetchAllMachineGroupData()
+  machineGroups.setMachineGroups(groups)
+
+  const types1 = await fetchAllMachineTypeData()
+  machineTypes.setMachineTypes(types1)
+
+  const types2 = await fetchAllServiceTypeData()
+  serviceTypes.setServiceTypes(types2)
 }
 
 async function addOneServiceType(data: ServiceType) {
@@ -207,7 +226,12 @@ async function deleteOneServiceType(data: ServiceType) {
   })
 }
 
-onMounted(() => {
-  fetchAllMachine()
+onMounted(async () => {
+  loadingWrapper(async () => {
+    await fetchAllTypesData()
+
+    const response = await fetchAllMachineData()
+    machines.value = response
+  })
 })
 </script>

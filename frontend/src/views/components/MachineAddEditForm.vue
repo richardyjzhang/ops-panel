@@ -55,9 +55,8 @@
 import { NCard, NButton, NForm, NFormItem, NInput, NInputNumber, NIcon, NSelect } from 'naive-ui'
 import type { FormInst, FormRules, SelectOption } from 'naive-ui'
 import { Check, X } from '@vicons/tabler'
-import { onMounted, ref } from 'vue'
-import { fetchAllMachineGroupData } from '@/services/MachineGroupService'
-import { fetchAllMachineTypeData } from '@/services/MachineTypeService'
+import { ref } from 'vue'
+import { useMachineGroupsStore, useMachineTypesStore } from '@/stores/types'
 
 const props = defineProps<{ curData: Machine; resource: string }>()
 
@@ -71,6 +70,10 @@ const formRef = ref<FormInst | null>(null)
 
 const formModel = ref<Machine>(props.curData)
 
+const machineGroups = useMachineGroupsStore()
+
+const machineTypes = useMachineTypesStore()
+
 const rules: FormRules = {
   name: {
     required: true,
@@ -78,9 +81,19 @@ const rules: FormRules = {
   },
 }
 
-const machineGroupOptions = ref<SelectOption[]>([])
+const machineGroupOptions = ref<SelectOption[]>(
+  machineGroups.machineGroups.map((m) => ({
+    label: m.name,
+    value: m.id,
+  })),
+)
 
-const machineTypeOptions = ref<SelectOption[]>([])
+const machineTypeOptions = ref<SelectOption[]>(
+  machineTypes.machineTypes.map((m) => ({
+    label: m.name,
+    value: m.id,
+  })),
+)
 
 function handleCancel(e: MouseEvent) {
   e.preventDefault()
@@ -109,21 +122,4 @@ function handleSubmit(e: MouseEvent) {
     emit('add', newMachine)
   }
 }
-
-onMounted(async () => {
-  const machineGroups = await fetchAllMachineGroupData()
-  machineGroupOptions.value = machineGroups.map((m) => {
-    return {
-      label: m.name,
-      value: m.id,
-    }
-  })
-  const machineTypes = await fetchAllMachineTypeData()
-  machineTypeOptions.value = machineTypes.map((m) => {
-    return {
-      label: m.name,
-      value: m.id,
-    }
-  })
-})
 </script>
