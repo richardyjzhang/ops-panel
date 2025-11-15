@@ -11,6 +11,7 @@
   <n-data-table :data="machineGroups" :columns="columns" />
   <n-modal v-model:show="showModal">
     <MyEasyForm
+      :resource="`设备分组`"
       :curData="curMachineGroup"
       @add="addOneMachineGroup"
       @update="updateOneMachineGroup"

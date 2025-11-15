@@ -1,5 +1,8 @@
 <template>
-  <n-card class="w-2/3 max-w-lg" title="新增分组">
+  <n-card
+    class="w-2/3 max-w-lg"
+    :title="`${props.curData.id === undefined ? '添加' : '编辑'}${props.resource}`"
+  >
     <n-form ref="formRef" :rules="rules" :model="formModel">
       <n-form-item path="id" label="分组ID">
         <n-input-number
@@ -37,7 +40,7 @@ import type { FormInst, FormRules } from 'naive-ui'
 import { Check, X } from '@vicons/tabler'
 import { ref } from 'vue'
 
-const props = defineProps<{ curData: MyIdNameInterface }>()
+const props = defineProps<{ curData: MyIdNameInterface; resource: string }>()
 
 const emit = defineEmits<{
   add: [data: MyIdNameInterface]

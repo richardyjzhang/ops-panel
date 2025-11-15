@@ -11,6 +11,7 @@
   <n-data-table :data="machineTypes" :columns="columns" />
   <n-modal v-model:show="showModal">
     <MyEasyForm
+      :resource="`设备类型`"
       :curData="curMachineType"
       @add="addOneMachineType"
       @update="updateOneMachineType"
