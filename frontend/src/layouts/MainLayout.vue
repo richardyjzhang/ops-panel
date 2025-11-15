@@ -49,7 +49,7 @@ import {
   NBreadcrumbItem,
 } from 'naive-ui'
 import { renderIcon } from './utils'
-import { LayoutGrid, HeartRateMonitor, BrandDocker } from '@vicons/tabler'
+import { LayoutGrid, HeartRateMonitor, BrandDocker, DevicesPc } from '@vicons/tabler'
 import NavBar from './components/NavBar.vue'
 
 const menuCollapsed = ref(false)
@@ -64,6 +64,11 @@ const menuOptions = [
     label: '计算设备管理',
     key: '/main/machines',
     icon: renderIcon(HeartRateMonitor),
+  },
+  {
+    label: '设备类型管理',
+    key: '/main/machine-types',
+    icon: renderIcon(DevicesPc),
   },
   {
     label: '服务类型管理',

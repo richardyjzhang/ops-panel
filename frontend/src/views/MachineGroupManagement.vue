@@ -9,14 +9,14 @@
   </n-button>
   <div class="mb-4"></div>
   <n-spin :show="loading">
-    <n-data-table :data="serviceTypes" :columns="columns" />
+    <n-data-table :data="machineGroups" :columns="columns" />
   </n-spin>
   <n-modal v-model:show="showModal">
     <MyEasyForm
-      :resource="`服务类型`"
-      :curData="curServiceType"
-      @add="addOneServiceType"
-      @update="updateOneServiceType"
+      :resource="`设备分组`"
+      :curData="curMachineGroup"
+      @add="addOneMachineGroup"
+      @update="updateOneMachineGroup"
       @cancel="closeModal"
     />
   </n-modal>
@@ -28,11 +28,11 @@ import { NDataTable, NButton, NIcon, NModal, useLoadingBar, NSpin } from 'naive-
 import { Plus } from '@vicons/tabler'
 import { h, onMounted, ref } from 'vue'
 import {
-  fetchAllServiceTypeData,
-  addOneServiceTypeData,
-  updateOneServiceTypeData,
-  deleteOneServiceTypeData,
-} from '@/services/ServiceTypeService'
+  fetchAllMachineGroupData,
+  addOneMachineGroupData,
+  updateOneMachineGroupData,
+  deleteOneMachineGroupData,
+} from '@/services/MachineGroupService'
 import MyEasyForm from './components/MyEasyForm.vue'
 import MyTableAction from './components/MyTableAction.vue'
 
@@ -40,13 +40,13 @@ const loadingBar = useLoadingBar()
 
 const loading = ref(false)
 
-const columns: DataTableColumns<ServiceType> = [
+const columns: DataTableColumns<MachineGroup> = [
   {
-    title: '服务类型ID',
+    title: '设备分组ID',
     key: 'id',
   },
   {
-    title: '服务类型名称',
+    title: '设备分组名称',
     key: 'name',
   },
   {
@@ -58,26 +58,26 @@ const columns: DataTableColumns<ServiceType> = [
           handleEditClick(row)
         },
         onDelete: () => {
-          deleteOneServiceType(row)
+          deleteOneMachineGroup(row)
         },
       })
     },
   },
 ]
 
-const serviceTypes = ref<ServiceType[]>([])
+const machineGroups = ref<MachineGroup[]>([])
 
 const showModal = ref(false)
 
-const curServiceType = ref<ServiceType>({})
+const curMachineGroup = ref<MachineGroup>({})
 
 function handleAddClick() {
-  curServiceType.value = {}
+  curMachineGroup.value = {}
   showModal.value = true
 }
 
-function handleEditClick(data: ServiceType) {
-  curServiceType.value = data
+function handleEditClick(data: MachineGroup) {
+  curMachineGroup.value = data
   showModal.value = true
 }
 
@@ -86,8 +86,8 @@ function closeModal() {
 }
 
 async function refreshData() {
-  const response = await fetchAllServiceTypeData()
-  serviceTypes.value = response
+  const response = await fetchAllMachineGroupData()
+  machineGroups.value = response
 }
 
 async function loadingWrapper(actions: () => {}) {
@@ -98,37 +98,37 @@ async function loadingWrapper(actions: () => {}) {
   loading.value = false
 }
 
-async function fetchAllServiceType() {
+async function fetchAllMachineGroup() {
   loadingWrapper(async () => {
-    const response = await fetchAllServiceTypeData()
-    serviceTypes.value = response
+    const response = await fetchAllMachineGroupData()
+    machineGroups.value = response
   })
 }
 
-async function addOneServiceType(data: ServiceType) {
+async function addOneMachineGroup(data: MachineGroup) {
   loadingWrapper(async () => {
     closeModal()
-    await addOneServiceTypeData(data)
+    await addOneMachineGroupData(data)
     await refreshData()
   })
 }
 
-async function updateOneServiceType(data: ServiceType) {
+async function updateOneMachineGroup(data: MachineGroup) {
   loadingWrapper(async () => {
     closeModal()
-    await updateOneServiceTypeData(data)
+    await updateOneMachineGroupData(data)
     await refreshData()
   })
 }
 
-async function deleteOneServiceType(data: ServiceType) {
+async function deleteOneMachineGroup(data: MachineGroup) {
   loadingWrapper(async () => {
-    await deleteOneServiceTypeData(data)
+    await deleteOneMachineGroupData(data)
     await refreshData()
   })
 }
 
 onMounted(() => {
-  fetchAllServiceType()
+  fetchAllMachineGroup()
 })
 </script>
