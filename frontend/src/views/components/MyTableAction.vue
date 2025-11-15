@@ -1,6 +1,6 @@
 <template>
   <div class="flex gap-4">
-    <n-button v-if="showDetail" type="primary" text @click="handleEdit">
+    <n-button v-if="props.showDetail" type="primary" text @click="handleDetail">
       <template #icon>
         <n-icon>
           <DeviceDesktop />

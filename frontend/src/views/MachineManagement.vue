@@ -9,10 +9,10 @@
   </n-button>
   <div class="mb-4"></div>
   <n-spin :show="loading">
-    <n-data-table :data="serviceTypes" :columns="columns" />
+    <n-data-table :data="machines" :columns="columns" />
   </n-spin>
   <n-modal v-model:show="showModal">
-    <MyEasyForm
+    <MachineAddEditForm
       :resource="`计算设备`"
       :curData="curServiceType"
       @add="addOneServiceType"
@@ -33,9 +33,7 @@ import {
   updateOneMachineData,
   deleteOneMachineData,
 } from '@/services/MachineService'
-import { fetchAllMachineGroupData } from '@/services/MachineGroupService'
-import { fetchAllMachineTypeData } from '@/services/MachineTypeService'
-import MyEasyForm from './components/MyEasyForm.vue'
+import MachineAddEditForm from './components/MachineAddEditForm.vue'
 import MyTableAction from './components/MyTableAction.vue'
 
 const loadingBar = useLoadingBar()
@@ -104,6 +102,7 @@ const columns: DataTableColumns<Machine> = [
     key: 'actions',
     render: (row) => {
       return h(MyTableAction, {
+        showDetail: true,
         onEdit: () => {
           handleEditClick(row)
         },
@@ -115,7 +114,7 @@ const columns: DataTableColumns<Machine> = [
   },
 ]
 
-const serviceTypes = ref<ServiceType[]>([])
+const machines = ref<Machine[]>([])
 
 const showModal = ref(false)
 
@@ -126,8 +125,29 @@ const machineTypeId2Name = ref<Map<number, string>>(new Map())
 const curServiceType = ref<ServiceType>({})
 
 function isMachineOK(machine: Machine) {
-  // TODO 需要用在线、服务、硬盘等综合判断
-  return machine.online
+  const THRESHOLD = 0.9
+
+  if (!machine.online) return false
+
+  if (machine.disks !== undefined) {
+    for (let i = 0; i < machine.disks.length; ++i) {
+      const disk = machine.disks[i]
+      if (disk !== undefined && disk.diskUsage !== undefined && disk.diskUsage > THRESHOLD) {
+        return false
+      }
+    }
+  }
+
+  if (machine.services !== undefined) {
+    for (let i = 0; i < machine.services.length; ++i) {
+      const service = machine.services[i]
+      if (service !== undefined && !service.online) {
+        return false
+      }
+    }
+  }
+
+  return true
 }
 
 function handleAddClick() {
@@ -146,10 +166,10 @@ function closeModal() {
 
 async function refreshData() {
   const response = await fetchAllMachineData()
-  serviceTypes.value = response
+  machines.value = response
 }
 
-async function loadingWrapper(actions: () => {}) {
+async function loadingWrapper(actions: () => void) {
   loading.value = true
   loadingBar.start()
   await actions()
@@ -160,25 +180,7 @@ async function loadingWrapper(actions: () => {}) {
 async function fetchAllMachine() {
   loadingWrapper(async () => {
     const response = await fetchAllMachineData()
-    serviceTypes.value = response
-  })
-}
-
-async function initAllData() {
-  const machineGroups = await fetchAllMachineGroupData()
-  machineGroupId2Name.value.clear()
-  machineGroups.forEach((v) => {
-    if (v.id !== undefined && v.name !== undefined) {
-      machineGroupId2Name.value.set(v.id, v.name)
-    }
-  })
-
-  const machineTypes = await fetchAllMachineTypeData()
-  machineTypeId2Name.value.clear()
-  machineTypes.forEach((v) => {
-    if (v.id !== undefined && v.name !== undefined) {
-      machineTypeId2Name.value.set(v.id, v.name)
-    }
+    machines.value = response
   })
 }
 
@@ -206,7 +208,6 @@ async function deleteOneServiceType(data: ServiceType) {
 }
 
 onMounted(() => {
-  initAllData()
   fetchAllMachine()
 })
 </script>
