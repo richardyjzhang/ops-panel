@@ -1,6 +1,7 @@
 <template>
   <div class="p-4">
-    <div class="flex justify-end">
+    <div class="flex justify-between items-center mb-6">
+      <h1 class="text-xl">{{ machine ? machine.name : '计算设备详情' }}</h1>
       <n-button @click="handleBack">
         <template #icon>
           <n-icon>
@@ -10,25 +11,21 @@
         返回
       </n-button>
     </div>
-
-    <div class="mb-6"></div>
-
-    <!-- 机器详情内容 -->
-    <n-card :title="machine ? machine.name : '计算设备详情'">
       <div v-if="machine" class="flex gap-20 items-stretch">
         <!-- 左列：设备信息 -->
-        <div >
-          <n-descriptions label-placement="left" :column="1">
-            <n-descriptions-item label="设备ID">
-              {{ machine.id }}
-            </n-descriptions-item>
-            <n-descriptions-item label="所在分组名">
-              {{ getGroupName(machine.groupId) }}
-            </n-descriptions-item>
-            <n-descriptions-item label="设备类型名">
-              {{ getTypeName(machine.typeId) }}
-            </n-descriptions-item>
-          </n-descriptions>
+        <div class="flex flex-col gap-4">
+          <div class="flex gap-4">
+            <span class="text-sm text-gray-600 font-medium min-w-[100px]">设备编号</span>
+            <span class="text-sm text-gray-900">{{ machine.id }}</span>
+          </div>
+          <div class="flex gap-4">
+            <span class="text-sm text-gray-600 font-medium min-w-[100px]">所在分组</span>
+            <span class="text-sm text-gray-900">{{ getGroupName(machine.groupId) }}</span>
+          </div>
+          <div class="flex gap-4">
+            <span class="text-sm text-gray-600 font-medium min-w-[100px]">设备类型</span>
+            <span class="text-sm text-gray-900">{{ getTypeName(machine.typeId) }}</span>
+          </div>
         </div>
         
         <!-- 右列：资源使用情况 -->
@@ -58,14 +55,13 @@
         </div>
       </div>
       <n-empty v-else description="暂无设备信息" />
-    </n-card>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { ref, onMounted, computed } from 'vue'
-import { NCard, NButton, NIcon, NEmpty, NDescriptions, NDescriptionsItem, NProgress } from 'naive-ui'
+import { NCard, NButton, NIcon, NEmpty, NProgress } from 'naive-ui'
 import { ArrowLeft } from '@vicons/tabler'
 import { useCurrentStore } from '@/stores/current'
 import { useMachineGroupsStore, useMachineTypesStore } from '@/stores/types'
