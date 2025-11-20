@@ -30,6 +30,11 @@ const router = createRouter({
           component: () => import('../views/MachineManagement.vue'),
         },
         {
+          path: '/main/machine-detail',
+          name: '计算设备详情',
+          component: () => import('../views/MachineDetail.vue'),
+        },
+        {
           path: '/main/service-types',
           name: '服务类型管理',
           component: () => import('../views/ServiceTypeManagement.vue'),
