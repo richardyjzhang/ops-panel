@@ -27,6 +27,7 @@ import type { DataTableColumns } from 'naive-ui'
 import { NDataTable, NButton, NIcon, NModal, useLoadingBar, NSpin, NTag } from 'naive-ui'
 import { Plus, AlertCircle, CircleCheck } from '@vicons/tabler'
 import { h, onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useMachineGroupsStore, useMachineTypesStore, useServiceTypesStore } from '@/stores/types'
 import {
   fetchAllMachineData,
@@ -37,8 +38,12 @@ import {
 import { fetchAllMachineGroupData } from '@/services/MachineGroupService'
 import { fetchAllMachineTypeData } from '@/services/MachineTypeService'
 import { fetchAllServiceTypeData } from '@/services/ServiceTypeService'
+import { useCurrentStore } from '@/stores/current'
 import MachineAddEditForm from './components/MachineAddEditForm.vue'
 import MyTableAction from './components/MyTableAction.vue'
+
+
+const router = useRouter()
 
 const loadingBar = useLoadingBar()
 
@@ -112,6 +117,9 @@ const columns: DataTableColumns<Machine> = [
     render: (row) => {
       return h(MyTableAction, {
         showDetail: true,
+        onDetail: () => {
+          handleShowDetailClick(row)
+        },
         onEdit: () => {
           handleEditClick(row)
         },
@@ -170,6 +178,13 @@ function handleAddClick() {
 function handleEditClick(data: Machine) {
   curMachine.value = data
   showModal.value = true
+}
+
+// 查看机器详情
+function handleShowDetailClick(data: Machine) {
+  const currentStore = useCurrentStore()
+  currentStore.setCurMachine(data)
+  router.push('/main/machine-detail')
 }
 
 // 关闭新增/修改弹窗
