@@ -24,7 +24,7 @@
           </div>
           <div class="flex gap-4">
             <span class="text-sm text-gray-600 font-medium min-w-[100px]">设备类型</span>
-            <span class="text-sm text-gray-900">{{ getTypeName(machine.typeId) }}</span>
+            <span class="text-sm text-gray-900">{{ getMachineTypeName(machine.typeId) }}</span>
           </div>
         </div>
         
@@ -54,29 +54,44 @@
           </div>
         </div>
       </div>
+
+      <!-- 分割线 -->
+       <div class="w-full h-[1px] bg-gray-300 my-12"></div>
       
       <!-- 硬盘使用情况 -->
-      <div v-if="machine" class="mt-12">
+      <div v-if="machine">
         <h2 class="text-lg font-medium mb-4">硬盘使用情况</h2>
         <n-data-table
           :columns="diskColumns"
-          :data="diskData"
+          :data="machine.disks || []"
           :bordered="false"
           size="small"
         />
       </div>
       
-      <n-empty v-else description="暂无设备信息" />
+      <!-- 分割线 -->
+       <div class="w-full h-[1px] bg-gray-300 my-12"></div>
+      
+      <!-- 服务运行情况 -->
+      <div v-if="machine">
+        <h2 class="text-lg font-medium mb-4">服务运行情况</h2>
+        <n-data-table
+          :columns="serviceColumns"
+          :data="machine.services || []"
+          :bordered="false"
+          size="small"
+        />
+      </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { ref, onMounted, computed, h } from 'vue'
-import { NCard, NButton, NIcon, NEmpty, NProgress, NDataTable } from 'naive-ui'
+import { ref, onMounted, h } from 'vue'
+import { NButton, NIcon, NDivider, NProgress, NDataTable } from 'naive-ui'
 import { ArrowLeft } from '@vicons/tabler'
 import { useCurrentStore } from '@/stores/current'
-import { useMachineGroupsStore, useMachineTypesStore } from '@/stores/types'
+import { useMachineGroupsStore, useMachineTypesStore, useServiceTypesStore } from '@/stores/types'
 
 // 路由相关
 const router = useRouter()
@@ -85,6 +100,7 @@ const router = useRouter()
 const currentStore = useCurrentStore()
 const machineGroupsStore = useMachineGroupsStore()
 const machineTypesStore = useMachineTypesStore()
+const serviceTypesStore = useServiceTypesStore()
 const machine = ref<Machine | null>(null)
 
 // 获取分组名
@@ -95,10 +111,17 @@ function getGroupName(groupId?: number): string {
 }
 
 // 获取设备类型名
-function getTypeName(typeId?: number): string {
+function getMachineTypeName(typeId?: number): string {
   if (!typeId) return '未知类型'
   const type = machineTypesStore.machineTypes.find(t => t.id === typeId)
   return type?.name || '未知类型'
+}
+
+// 获取服务类型名
+function getServiceTypeName(typeId?: number): string {
+  if (!typeId) return '未知服务类型'
+  const type = serviceTypesStore.serviceTypes.find(t => t.id === typeId)
+  return type?.name || '未知服务类型'
 }
 
 // 返回列表
@@ -148,25 +171,43 @@ const diskColumns = [
   }
 ]
 
-// 计算硬盘数据
-const diskData = computed(() => {
-  if (!machine.value?.disks || machine.value.disks.length === 0) {
-    // 如果没有硬盘数据，返回默认数据
-    return [
-      {
-        id: 1,
-        name: '系统盘',
-        diskUsage: 0.3
-      },
-      {
-        id: 2,
-        name: '数据盘',
-        diskUsage: 0.65
-      }
-    ]
+// 服务数据表格列定义
+const serviceColumns = [
+  {
+    title: '服务ID',
+    key: 'id',
+    width: 50
+  },
+  {
+    title: '服务名称',
+    key: 'name',
+    width: 100
+  },
+  {
+    title: '服务类型',
+    key: 'typeId',
+    width: 80,
+    render(row: MachineService) {
+      return getServiceTypeName(row.typeId)
+    }
+  },
+  {
+    title: '运行状态',
+    key: 'online',
+    width: 120,
+    render(row: MachineService) {
+      const isOnline = row.online || false
+      return h('div', { class: 'flex items-center gap-2' }, [
+        h('div', { 
+          class: `w-2 h-2 rounded-full ${isOnline ? 'bg-green-500' : 'bg-red-500'}` 
+        }),
+        h('span', { class: isOnline ? 'text-green-600' : 'text-red-600' }, 
+          isOnline ? '在线' : '离线'
+        )
+      ])
+    }
   }
-  return machine.value.disks
-})
+]
 
 onMounted(() => {
   // 从store获取当前机器信息
