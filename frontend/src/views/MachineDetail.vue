@@ -1,7 +1,7 @@
 <template>
   <div class="p-4">
     <div class="flex justify-between items-center mb-6">
-      <h1 class="text-xl">{{ machine ? machine.name : '计算设备详情' }}</h1>
+      <h2 class="text-lg font-medium">{{ machine ? machine.name : '计算设备详情' }}</h2>
       <n-button @click="handleBack">
         <template #icon>
           <n-icon>
@@ -54,14 +54,26 @@
           </div>
         </div>
       </div>
+      
+      <!-- 硬盘使用情况 -->
+      <div v-if="machine" class="mt-12">
+        <h2 class="text-lg font-medium mb-4">硬盘使用情况</h2>
+        <n-data-table
+          :columns="diskColumns"
+          :data="diskData"
+          :bordered="false"
+          size="small"
+        />
+      </div>
+      
       <n-empty v-else description="暂无设备信息" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { ref, onMounted, computed } from 'vue'
-import { NCard, NButton, NIcon, NEmpty, NProgress } from 'naive-ui'
+import { ref, onMounted, computed, h } from 'vue'
+import { NCard, NButton, NIcon, NEmpty, NProgress, NDataTable } from 'naive-ui'
 import { ArrowLeft } from '@vicons/tabler'
 import { useCurrentStore } from '@/stores/current'
 import { useMachineGroupsStore, useMachineTypesStore } from '@/stores/types'
@@ -104,6 +116,57 @@ function getProgressStatus(value: number | undefined) {
   if (value <= 80) return 'warning' // 黄色
   return 'error'                    // 红色
 }
+
+// 硬盘数据表格列定义
+const diskColumns = [
+  {
+    title: '硬盘ID',
+    key: 'id',
+    width: 50
+  },
+  {
+    title: '挂载路径',
+    key: 'name',
+    width: 100
+  },
+  {
+    title: '使用率',
+    key: 'diskUsage',
+    width: 200,
+    render(row: MachineDisk) {
+      const usage = row.diskUsage ? row.diskUsage * 100 : 0
+      return h('div', { class: 'flex items-center gap-2' }, [
+        h('span', { class: 'text-gray-600 min-w-15' }, `${usage.toFixed(1)}%`),
+      h(NProgress, {
+          type: 'line',
+          percentage: usage,
+          status: getProgressStatus(row.diskUsage),
+          showIndicator: false
+        })
+      ])
+    }
+  }
+]
+
+// 计算硬盘数据
+const diskData = computed(() => {
+  if (!machine.value?.disks || machine.value.disks.length === 0) {
+    // 如果没有硬盘数据，返回默认数据
+    return [
+      {
+        id: 1,
+        name: '系统盘',
+        diskUsage: 0.3
+      },
+      {
+        id: 2,
+        name: '数据盘',
+        diskUsage: 0.65
+      }
+    ]
+  }
+  return machine.value.disks
+})
 
 onMounted(() => {
   // 从store获取当前机器信息
