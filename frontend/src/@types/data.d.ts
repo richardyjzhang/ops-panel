@@ -9,24 +9,18 @@ declare interface MachineType extends MyIdNameInterface {}
 
 declare interface ServiceType extends MyIdNameInterface {}
 
-declare interface MachineDisk {
-  id?: number;
-  name?: string;
+declare interface MachineDisk extends MyIdNameInterface {
   machineId?: number;
   diskUsage?: number;
 }
 
-declare interface MachineService {
-  id?: number;
-  name?: string;
+declare interface MachineService extends MyIdNameInterface {
   machineId?: number;
   typeId?: number;
   online?: boolean;
 }
 
-declare interface Machine {
-    id?: number;
-    name?: string;
+declare interface Machine extends MyIdNameInterface {
     groupId?: number;
     typeId?: number;
     online?: boolean;

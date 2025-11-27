@@ -18,3 +18,31 @@ export async function updateOneMachineData(data: Machine): Promise<Machine> {
 export async function deleteOneMachineData(data: Machine) {
     await del(`/machines/${data.id}`);
 }
+
+export async function addOneMachineDiskData(data: MachineDisk): Promise<MachineDisk> {
+    const response = await post<MachineDisk>('/machine-disks', data);
+    return response;
+}
+
+export async function updateOneMachineDiskData(data: MachineDisk): Promise<MachineDisk> {
+    const response = await put<MachineDisk>(`/machine-disks/${data.id}`, data);
+    return response;
+}
+
+export async function deleteOneMachineDiskData(data: MachineDisk) {
+    await del(`/machine-disks/${data.id}`);
+}
+
+export async function addOneMachineServiceData(data: MachineService) {
+    const response = await post<MachineService>('/machine-services', data);
+    return response;
+}
+
+export async function updateOneMachineServiceData(data: MachineService) {
+    const response = await put<MachineService>(`/machine-services/${data.id}`, data);
+    return response;
+}
+
+export async function deleteOneMachineServiceData(data: MachineService) {
+    await del(`/machine-services/${data.id}`);
+}
