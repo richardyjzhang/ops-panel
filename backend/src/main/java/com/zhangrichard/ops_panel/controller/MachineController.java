@@ -19,6 +19,15 @@ public class MachineController {
         return machineService.findAllMachine();
     }
 
+    @GetMapping("/machines/{id}")
+    public ResponseEntity<Machine> getOneMachine(@PathVariable Integer id) {
+        Machine machine = machineService.findOneMachine(id);
+        if (machine == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(machine);
+    }
+
     @PostMapping("/machines")
     public  Machine addOneMachine(@RequestBody Machine machine) {
         return machineService.addOneMachine(machine);

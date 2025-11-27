@@ -7,6 +7,7 @@ import java.util.List;
 public interface MachineService {
 
     List<Machine> findAllMachine();
+    Machine findOneMachine(Integer id);
     Machine addOneMachine(Machine machine);
     Machine updateOneMachine(Integer id, Machine machine);
     void deleteOneMachine(Integer id);

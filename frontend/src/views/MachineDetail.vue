@@ -1,135 +1,138 @@
 <template>
-  <div class="p-4">
-    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-lg font-medium">{{ machine ? machine.name : '计算设备详情' }}</h2>
-      <n-button @click="handleBack">
-        <template #icon>
-          <n-icon>
-            <arrow-left />
-          </n-icon>
-        </template>
-        返回
-      </n-button>
-    </div>
-    <div v-if="machine" class="flex gap-20 items-stretch">
-      <!-- 左列：设备信息 -->
-      <div class="flex flex-col gap-4">
-        <div class="flex gap-4">
-          <span class="text-sm text-gray-600 font-medium min-w-[100px]">设备编号</span>
-          <span class="text-sm text-gray-900">{{ machine.id }}</span>
+  <n-spin :show="loading">
+    <div class="p-4">
+      <div class="flex justify-between items-center mb-6">
+        <h2 class="text-lg font-medium">{{ machine ? machine.name : '计算设备详情' }}</h2>
+        <n-button @click="handleBack">
+          <template #icon>
+            <n-icon>
+              <arrow-left />
+            </n-icon>
+          </template>
+          返回
+        </n-button>
+      </div>
+      <div v-if="machine" class="flex gap-20 items-stretch">
+        <!-- 左列：设备信息 -->
+        <div class="flex flex-col gap-4">
+          <div class="flex gap-4">
+            <span class="text-sm text-gray-600 font-medium min-w-[100px]">设备编号</span>
+            <span class="text-sm text-gray-900">{{ machine.id }}</span>
+          </div>
+          <div class="flex gap-4">
+            <span class="text-sm text-gray-600 font-medium min-w-[100px]">所在分组</span>
+            <span class="text-sm text-gray-900">{{ getGroupName(machine.groupId) }}</span>
+          </div>
+          <div class="flex gap-4">
+            <span class="text-sm text-gray-600 font-medium min-w-[100px]">设备类型</span>
+            <span class="text-sm text-gray-900">{{ getMachineTypeName(machine.typeId) }}</span>
+          </div>
         </div>
-        <div class="flex gap-4">
-          <span class="text-sm text-gray-600 font-medium min-w-[100px]">所在分组</span>
-          <span class="text-sm text-gray-900">{{ getGroupName(machine.groupId) }}</span>
-        </div>
-        <div class="flex gap-4">
-          <span class="text-sm text-gray-600 font-medium min-w-[100px]">设备类型</span>
-          <span class="text-sm text-gray-900">{{ getMachineTypeName(machine.typeId) }}</span>
+
+        <!-- 右列：资源使用情况 -->
+        <div class="flex flex-1 flex-col gap-3 justify-center">
+          <div class="flex flex-col gap-1">
+            <div class="flex gap-4 items-center">
+              <span class="text-sm text-gray-600 font-medium">CPU使用率</span>
+            </div>
+            <n-progress
+              type="line"
+              :percentage="machine.cpuUsage ? machine.cpuUsage * 100 : 0"
+              indicator-placement="inside"
+              :status="getProgressStatus(machine.cpuUsage)"
+            />
+          </div>
+          <div class="flex flex-col gap-1">
+            <div class="flex gap-4 items-center">
+              <span class="text-sm text-gray-600 font-medium">内存使用率</span>
+            </div>
+            <n-progress
+              type="line"
+              :percentage="machine.ramUsage ? machine.ramUsage * 100 : 0"
+              indicator-placement="inside"
+              :status="getProgressStatus(machine.ramUsage)"
+            />
+          </div>
         </div>
       </div>
 
-      <!-- 右列：资源使用情况 -->
-      <div class="flex flex-1 flex-col gap-3 justify-center">
-        <div class="flex flex-col gap-1">
-          <div class="flex gap-4 items-center">
-            <span class="text-sm text-gray-600 font-medium">CPU使用率</span>
-          </div>
-          <n-progress
-            type="line"
-            :percentage="machine.cpuUsage ? machine.cpuUsage * 100 : 0"
-            indicator-placement="inside"
-            :status="getProgressStatus(machine.cpuUsage)"
-          />
-        </div>
-        <div class="flex flex-col gap-1">
-          <div class="flex gap-4 items-center">
-            <span class="text-sm text-gray-600 font-medium">内存使用率</span>
-          </div>
-          <n-progress
-            type="line"
-            :percentage="machine.ramUsage ? machine.ramUsage * 100 : 0"
-            indicator-placement="inside"
-            :status="getProgressStatus(machine.ramUsage)"
-          />
-        </div>
+      <!-- 分割线 -->
+      <div class="w-full h-[1px] bg-gray-300 my-12"></div>
+
+      <!-- 硬盘使用情况 -->
+      <div v-if="machine">
+        <h2 class="text-lg font-medium mb-4">硬盘使用情况</h2>
+        <n-button type="primary" size="small" @click="handleDiskAddClick">
+          <template #icon>
+            <n-icon>
+              <plus />
+            </n-icon>
+          </template>
+          新增
+        </n-button>
+        <div class="w-full my-2" />
+        <n-data-table
+          :columns="diskColumns"
+          :data="machine.disks || []"
+          :bordered="false"
+          size="small"
+        />
+      </div>
+
+      <!-- 分割线 -->
+      <div class="w-full h-[1px] bg-gray-300 my-12"></div>
+
+      <!-- 服务运行情况 -->
+      <div v-if="machine">
+        <h2 class="text-lg font-medium mb-4">服务运行情况</h2>
+        <n-button type="primary" size="small" @click="handleServiceAddClick">
+          <template #icon>
+            <n-icon>
+              <plus />
+            </n-icon>
+          </template>
+          新增
+        </n-button>
+        <div class="w-full my-2" />
+        <n-data-table
+          :columns="serviceColumns"
+          :data="machine.services || []"
+          :bordered="false"
+          size="small"
+        />
       </div>
     </div>
-
-    <!-- 分割线 -->
-    <div class="w-full h-[1px] bg-gray-300 my-12"></div>
-
-    <!-- 硬盘使用情况 -->
-    <div v-if="machine">
-      <h2 class="text-lg font-medium mb-4">硬盘使用情况</h2>
-      <n-button type="primary" size="small" @click="handleDiskAddClick">
-        <template #icon>
-          <n-icon>
-            <plus />
-          </n-icon>
-        </template>
-        新增
-      </n-button>
-      <div class="w-full my-2" />
-      <n-data-table
-        :columns="diskColumns"
-        :data="machine.disks || []"
-        :bordered="false"
-        size="small"
+    <n-modal :show="showDiskModal">
+      <MyEasyForm
+        :resource="`磁盘`"
+        :cur-data="curMachineDisk"
+        @add="addOneDisk"
+        @update="updateOneDisk"
+        @cancel="closeModal"
       />
-    </div>
-
-    <!-- 分割线 -->
-    <div class="w-full h-[1px] bg-gray-300 my-12"></div>
-
-    <!-- 服务运行情况 -->
-    <div v-if="machine">
-      <h2 class="text-lg font-medium mb-4">服务运行情况</h2>
-      <n-button type="primary" size="small" @click="handleServiceAddClick">
-        <template #icon>
-          <n-icon>
-            <plus />
-          </n-icon>
-        </template>
-        新增
-      </n-button>
-      <div class="w-full my-2" />
-      <n-data-table
-        :columns="serviceColumns"
-        :data="machine.services || []"
-        :bordered="false"
-        size="small"
+    </n-modal>
+    <n-modal :show="showServiceModal">
+      <MachineServiceAddEditForm
+        :resource="`服务`"
+        :cur-data="curMachineService"
+        @add="addOneService"
+        @update="updateOneService"
+        @cancel="closeModal"
       />
-    </div>
-  </div>
-  <n-modal :show="showDiskModal">
-    <MyEasyForm
-      :resource="`磁盘`"
-      :cur-data="curMachineDisk"
-      @add="addOneDisk"
-      @update="updateOneDisk"
-      @cancel="closeModal"
-    />
-  </n-modal>
-  <n-modal :show="showServiceModal">
-    <MachineServiceAddEditForm
-      :resource="`服务`"
-      :cur-data="curMachineService"
-      @add="addOneService"
-      @update="updateOneService"
-      @cancel="closeModal"
-    />
-  </n-modal>
+    </n-modal>
+  </n-spin>
 </template>
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
 import { ref, onMounted, h } from 'vue'
-import { NButton, NIcon, NModal, NProgress, NDataTable } from 'naive-ui'
+import { NButton, NIcon, NModal, NProgress, NDataTable, NSpin, useLoadingBar } from 'naive-ui'
 import type { DataTableColumns } from 'naive-ui'
 import { ArrowLeft, Plus } from '@vicons/tabler'
 import { useCurrentStore } from '@/stores/current'
 import { useMachineGroupsStore, useMachineTypesStore, useServiceTypesStore } from '@/stores/types'
 import {
+  fetchOneMachineData,
   addOneMachineDiskData,
   updateOneMachineDiskData,
   deleteOneMachineDiskData,
@@ -156,6 +159,10 @@ const showDiskModal = ref(false)
 const showServiceModal = ref(false)
 const curMachineDisk = ref({})
 const curMachineService = ref({})
+
+const loadingBar = useLoadingBar()
+
+const loading = ref(false)
 
 // 获取分组名
 function getGroupName(groupId?: number): string {
@@ -293,6 +300,14 @@ const serviceColumns: DataTableColumns<MachineService> = [
   },
 ]
 
+async function loadingWrapper(actions: () => void) {
+  loading.value = true
+  loadingBar.start()
+  await actions()
+  loadingBar.finish()
+  loading.value = false
+}
+
 // 关闭新增/编辑对话框
 function closeModal() {
   showDiskModal.value = false
@@ -311,11 +326,6 @@ function handleDiskAddClick() {
   showDiskModal.value = true
 }
 
-// 点击删除，删除一个磁盘
-async function deleteOneMachineDisk(data: MachineDisk) {
-  await deleteOneMachineDiskData(data)
-}
-
 // 点击编辑，展开编辑服务对话框
 function handleServiceEditClick(data: MachineService) {
   curMachineService.value = data
@@ -328,37 +338,68 @@ function handleServiceAddClick() {
   showServiceModal.value = true
 }
 
+// 增删改后刷新数据
+async function refreshData() {
+  if (machine.value?.id) {
+    const response = await fetchOneMachineData(machine.value.id)
+    machine.value = response
+  }
+}
+
+// 点击删除，删除一个磁盘
+async function deleteOneMachineDisk(data: MachineDisk) {
+  loadingWrapper(async () => {
+    await deleteOneMachineDiskData(data)
+    await refreshData()
+  })
+}
+
 // 点击删除，删除一个服务
 async function deleteOneMachineService(data: MachineService) {
-  await deleteOneMachineServiceData(data)
+  loadingWrapper(async () => {
+    await deleteOneMachineServiceData(data)
+    await refreshData()
+  })
 }
 
 // 调用接口添加一个磁盘
 async function addOneDisk(data: MachineDisk) {
-  closeModal()
-  data.diskUsage = 0.0
-  data.machineId = machine.value?.id
-  addOneMachineDiskData(data)
+  loadingWrapper(async () => {
+    closeModal()
+    data.diskUsage = 0.0
+    data.machineId = machine.value?.id
+    await addOneMachineDiskData(data)
+    await refreshData()
+  })
 }
 
 // 调用接口编辑一个磁盘
 async function updateOneDisk(data: MachineDisk) {
-  closeModal()
-  await updateOneMachineDiskData(data)
+  loadingWrapper(async () => {
+    closeModal()
+    await updateOneMachineDiskData(data)
+    await refreshData()
+  })
 }
 
 // 调用接口添加一个服务
 async function addOneService(data: MachineService) {
-  closeModal()
-  data.online = false
-  data.machineId = machine.value?.id
-  await addOneMachineServiceData(data)
+  loadingWrapper(async () => {
+    closeModal()
+    data.online = false
+    data.machineId = machine.value?.id
+    await addOneMachineServiceData(data)
+    await refreshData()
+  })
 }
 
 // 调用接口编辑一个服务
 async function updateOneService(data: MachineService) {
-  closeModal()
-  await updateOneMachineServiceData(data)
+  loadingWrapper(async () => {
+    closeModal()
+    await updateOneMachineServiceData(data)
+    await refreshData()
+  })
 }
 
 onMounted(() => {

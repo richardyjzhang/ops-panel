@@ -5,6 +5,11 @@ export async function fetchAllMachineData(): Promise<Machine[]> {
     return response;
 }
 
+export async function fetchOneMachineData(id: number): Promise<Machine> {
+    const response = await get<Machine>(`/machines/${id}`);
+    return response;
+}
+
 export async function addOneMachineData(data: Machine): Promise<Machine> {
     const response = await post<Machine>('/machines', data);
     return response;

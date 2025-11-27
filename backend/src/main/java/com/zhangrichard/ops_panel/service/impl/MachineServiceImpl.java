@@ -21,6 +21,12 @@ public class MachineServiceImpl implements MachineService {
     }
 
     @Override
+    public Machine findOneMachine(Integer id) {
+        Optional<Machine> _machine = machineRepository.findById(id);
+        return _machine.orElse(null);
+    }
+
+    @Override
     public Machine addOneMachine(Machine machine) {
         Machine newMachine = machineRepository.save(machine);
         return newMachine;
