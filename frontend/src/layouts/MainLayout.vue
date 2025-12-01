@@ -22,30 +22,17 @@
       </n-layout-sider>
       <n-layout-content>
         <main class="w-full h-full bg-gray-100 p-4 flex flex-col">
-          <n-breadcrumb class="mb-2">
-            <n-breadcrumb-item>面</n-breadcrumb-item>
-            <n-breadcrumb-item>包</n-breadcrumb-item>
-            <n-breadcrumb-item>Shit</n-breadcrumb-item>
-          </n-breadcrumb>
           <div class="mb-2">
-            <n-tabs
-              v-model:value="tabsStore.activeTabPath"
-              type="card"
-              closable
+            <custom-tabs
+              :tabs="tabsStore.tabs"
+              v-model:active-tab-path="tabsStore.activeTabPath"
               @close="handleCloseTab"
-              @update:value="handleTabChange"
+              @update="handleTabChange"
             >
-              <n-tab-pane
-                v-for="tab in tabsStore.tabs"
-                :key="tab.path"
-                :name="tab.path"
-                :tab="tab.label"
-              >
-                <n-card class="grow">
-                  <router-view />
-                </n-card>
-              </n-tab-pane>
-            </n-tabs>
+              <n-card :bordered="false" class="grow">
+                <router-view />
+              </n-card>
+            </custom-tabs>
           </div>
         </main>
       </n-layout-content>
@@ -61,16 +48,13 @@ import {
   NLayoutSider,
   NLayoutContent,
   NMenu,
-  NCard,
-  NBreadcrumb,
-  NBreadcrumbItem,
-  NTabs,
-  NTabPane
+  NCard
 } from 'naive-ui'
 import { renderIcon } from './utils'
 import { LayoutGrid, HeartRateMonitor, BrandDocker, DevicesPc } from '@vicons/tabler'
 import NavBar from './components/NavBar.vue'
-import { useTabsStore } from '../stores/tabs'
+import CustomTabs from './components/CustomTabs.vue'
+import { useTabsStore } from '@/stores/tabs'
 
 const menuCollapsed = ref(false)
 const router = useRouter()
