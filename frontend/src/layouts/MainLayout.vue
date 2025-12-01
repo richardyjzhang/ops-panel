@@ -27,9 +27,26 @@
             <n-breadcrumb-item>包</n-breadcrumb-item>
             <n-breadcrumb-item>Shit</n-breadcrumb-item>
           </n-breadcrumb>
-          <n-card :title="$route.name?.toString()" class="grow">
-            <router-view />
-          </n-card>
+          <div class="mb-2">
+            <n-tabs
+              v-model:value="tabsStore.activeTabPath"
+              type="card"
+              closable
+              @close="handleCloseTab"
+              @update:value="handleTabChange"
+            >
+              <n-tab-pane
+                v-for="tab in tabsStore.tabs"
+                :key="tab.path"
+                :name="tab.path"
+                :tab="tab.label"
+              >
+                <n-card class="grow">
+                  <router-view />
+                </n-card>
+              </n-tab-pane>
+            </n-tabs>
+          </div>
         </main>
       </n-layout-content>
     </n-layout>
@@ -37,8 +54,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import {
   NLayout,
   NLayoutSider,
@@ -47,12 +64,18 @@ import {
   NCard,
   NBreadcrumb,
   NBreadcrumbItem,
+  NTabs,
+  NTabPane
 } from 'naive-ui'
 import { renderIcon } from './utils'
 import { LayoutGrid, HeartRateMonitor, BrandDocker, DevicesPc } from '@vicons/tabler'
 import NavBar from './components/NavBar.vue'
+import { useTabsStore } from '../stores/tabs'
 
 const menuCollapsed = ref(false)
+const router = useRouter()
+const route = useRoute()
+const tabsStore = useTabsStore()
 
 const menuOptions = [
   {
@@ -77,9 +100,39 @@ const menuOptions = [
   },
 ]
 
-const router = useRouter()
-
 function handleMenuSelect(key: string) {
+  // 添加标签页
+  const currentMenu = menuOptions.find(menu => menu.key === key)
+  if (currentMenu) {
+    tabsStore.addTab({
+      label: currentMenu.label,
+      path: key
+    })
+  }
   router.push(key)
 }
+
+function handleCloseTab(tabPath: string) {
+  tabsStore.closeTab(tabPath)
+  // 如果关闭的是当前激活的标签页，需要跳转到新的激活标签页
+  if (tabPath === route.path && tabsStore.activeTabPath) {
+    router.push(tabsStore.activeTabPath)
+  }
+}
+
+function handleTabChange(tabPath: string) {
+  tabsStore.setActiveTab(tabPath)
+  router.push(tabPath)
+}
+
+// 初始化时处理当前路由对应的标签页
+onMounted(() => {
+  // 添加当前路由对应的标签页
+  if (route.path && route.name) {
+    tabsStore.addTab({
+      label: route.name.toString(),
+      path: route.path
+    })
+  }
+})
 </script>
