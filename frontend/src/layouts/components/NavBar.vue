@@ -1,7 +1,7 @@
 <template>
-  <nav class="w-full h-12 bg-green-300 border-b border-b-gray-300 px-4 flex gap-4 items-center">
-    <img src="@/assets/logo.png" class="h-2/3" />
-    <span class="text-xl">服务器状态监控</span>
+  <nav class="w-full h-14 bg-[#18a058] text-white shadow-md flex items-center px-6 gap-4">
+    <img src="@/assets/logo.png" class="h-8 rounded-md" alt="Logo" />
+    <span class="text-xl font-semibold">服务器状态监控</span>
     <div class="grow"></div>
     <avatar-dropdown />
   </nav>
