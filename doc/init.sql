@@ -52,3 +52,11 @@ CREATE TABLE `service_type`
     `id` INT PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(255) NOT NULL
 );
+
+-- 用户，用于登录
+CREATE TABLE `login_user`
+(
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `username` VARCHAR(255) NOT NULL,
+    `password` VARCHAR(255) NOT NULL -- 密码哈希值
+);
