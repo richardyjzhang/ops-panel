@@ -44,8 +44,9 @@ public class MqttConfig {
 
     @Bean
     public MessageProducer inbound() {
+        String clientId = "OPS_PANEL_JAVA_" + System.currentTimeMillis();
         MqttPahoMessageDrivenChannelAdapter adapter =
-                new MqttPahoMessageDrivenChannelAdapter("TEST_JAVA_CLIENT_inbound",
+                new MqttPahoMessageDrivenChannelAdapter(clientId,
                         mqttClientFactory(), topic);
         adapter.setOutputChannel(mqttInputChannel());
         return adapter;
