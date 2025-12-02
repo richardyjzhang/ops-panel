@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+  <div class="min-h-screen flex items-center justify-center bg-gradient-to-r from-[#5cc88a] to-[#7fd19c]">
     <div class="w-full max-w-md bg-white rounded-lg shadow-lg p-8">
       <div class="text-center mb-8">
         <div class="flex items-center justify-center w-16 h-16 bg-white rounded-full mx-auto mb-4 shadow-md">
@@ -8,7 +8,6 @@
         <h1 class="text-2xl font-bold text-gray-800">服务器状态监控</h1>
         <p class="text-gray-500 mt-2">请登录以继续</p>
       </div>
-      
       <form @submit.prevent="handleLogin">
         <div class="mb-4">
           <label for="username" class="block text-sm font-medium text-gray-700 mb-1">用户名</label>
@@ -21,7 +20,6 @@
             required
           />
         </div>
-        
         <div class="mb-6">
           <label for="password" class="block text-sm font-medium text-gray-700 mb-1">密码</label>
           <input
@@ -33,16 +31,14 @@
             required
           />
         </div>
-        
         <button
           type="submit"
           class="w-full bg-[#18a058] hover:bg-[#36ad6a] text-white font-medium py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-[#18a058] focus:ring-offset-2 cursor-pointer"
         >
           <span>登录</span>
         </button>
-        
         <div class="mt-6 text-center text-sm text-gray-500">
-          <p>忘记密码？<a href="#" class="text-[#18a058] hover:underline">联系管理员</a></p>
+          <p>忘记密码？<span class="text-[#18a058]">联系管理员</span></p>
         </div>
       </form>
     </div>
@@ -60,9 +56,7 @@ const notification = useNotification()
 const username = ref('')
 const password = ref('')
 
-
 async function handleLogin() {
-  
     const response = await login({
       username: username.value,
       password: password.value
