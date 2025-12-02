@@ -29,3 +29,13 @@ declare interface Machine extends MyIdNameInterface {
     disks?: MachineDisk[];
     services?: MachineService[];
 }
+
+declare interface LoginUser {
+  username: string;
+  password: string;
+}
+
+declare interface LoginResult {
+  success: boolean;
+  message: string;
+}

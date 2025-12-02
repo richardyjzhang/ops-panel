@@ -8,6 +8,10 @@
 import { NDropdown } from 'naive-ui'
 import { UserCircle, Logout, ShieldLock } from '@vicons/tabler'
 import { renderIcon } from '../utils';
+import { logout } from '@/services/AuthService'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const options = [
   {
@@ -21,8 +25,13 @@ const options = [
   }
 ]
 
-function handleSelect(key: string | number) {
-  // TODO
-  console.log(key);
+async function handleSelect(key: string | number) {
+  if (key === 'logout') {
+      await logout()
+      router.push('/login')
+  } else if (key === 'change-password') {
+    // TODO: 实现修改密码功能
+    console.log('修改密码')
+  }
 }
 </script>

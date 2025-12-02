@@ -7,13 +7,22 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: '/main/groups',
+      redirect: '/login',
+    },
+    {
+      path: '/login',
+      name: 'login',
+      component: () => import('../views/Login.vue'),
     },
     {
       path: '/main',
       name: 'main-layout',
       component: MainLayout,
       children: [
+        {
+          path: '/main',
+          redirect: '/main/groups',
+        },
         {
           path: '/main/groups',
           name: '设备分组管理',

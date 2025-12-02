@@ -1,7 +1,9 @@
 <template>
   <n-message-provider>
     <n-loading-bar-provider>
-      <router-view />
+      <n-notification-provider>
+        <router-view />
+      </n-notification-provider>
     </n-loading-bar-provider>
   </n-message-provider>
 </template>
@@ -11,5 +13,5 @@
 </style>
 
 <script setup lang="ts">
-import { NMessageProvider, NLoadingBarProvider } from 'naive-ui'
+import { NMessageProvider, NLoadingBarProvider, NNotificationProvider } from 'naive-ui'
 </script>
