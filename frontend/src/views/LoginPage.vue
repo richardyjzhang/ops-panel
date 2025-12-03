@@ -50,6 +50,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useNotification  } from 'naive-ui'
 import { login } from '@/services/AuthService'
+import sha256 from 'crypto-js/sha256'
 
 const router = useRouter()
 const notification = useNotification()
@@ -57,23 +58,24 @@ const username = ref('')
 const password = ref('')
 
 async function handleLogin() {
-    const response = await login({
-      username: username.value,
-      password: password.value
+  const hashedPassword = sha256(username.value + '7355608' + password.value).toString()
+
+  const response = await login({
+    username: username.value,
+    password: hashedPassword
+  })
+  if (response.success) {
+    notification['success']({
+      content: '登录成功',
+      meta: '欢迎使用本系统'
     })
-    
-    if (response.success) {
-      notification['success']({
-        content: '登录成功',
-        meta: '欢迎使用本系统'
-      })
-      router.push('/main')
-    } else {
-      notification['error']({
-        content: '登录失败',
-        meta: '请检查用户名和密码',
-        duration: 2500
-      })
-    }
+    router.push('/main')
+  } else {
+    notification['error']({
+      content: '登录失败',
+      meta: '请检查用户名和密码',
+      duration: 2500
+    })
+  }
 }
 </script>
